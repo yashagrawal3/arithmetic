@@ -15,30 +15,17 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """Arithmetic Activity: A quiz activity for arithmetic."""
 
-import os
 import logging
-import re
 import gtk
 import pango
-import gobject
 import random
 from gettext import gettext as _
 
 from sugar.activity import activity
-from sugar import env
-from sugar.graphics import iconentry
-from sugar.graphics.toolbutton import ToolButton
-from sugar.graphics.toggletoolbutton import ToggleToolButton
-from sugar.graphics.palette import Palette
-from sugar.graphics.alert import NotifyAlert
 
 # Should be builtin to sugar.graphics.alert.NotifyAlert...
 def _notify_response_cb(notify, response, activity):
     activity.remove_alert(notify)
-
-SERVICE = "org.laptop.Arithmetic"
-IFACE = SERVICE
-PATH = "/org/laptop/Arithmetic"
 
 class ArithmeticActivity(activity.Activity):
     """Arithmetic Activity as specified in activity.info"""
@@ -54,9 +41,9 @@ class ArithmeticActivity(activity.Activity):
         """Set up the Arithmetic activity."""
         super(ArithmeticActivity, self).__init__(handle)
         self._logger = logging.getLogger('arithmetic-activity')
-
-        from sugar.graphics.menuitem import MenuItem
-        from sugar.graphics.icon import Icon
+        self.numcorrect = 0
+        self.numincorrect = 0
+        self.answer = ""
 
         # Main layout
         hbox = gtk.HBox(homogeneous=True)
@@ -72,12 +59,16 @@ class ArithmeticActivity(activity.Activity):
         modebox       = gtk.HBox()
         questionbox   = gtk.HBox()
         answerbox     = gtk.HBox()
+        decisionbox   = gtk.HBox()
+        correctbox    = gtk.HBox()
+        incorrectbox  = gtk.HBox()
 
         # Labels
         difficultylabel = gtk.Label("Difficulty: ")
         modelabel       = gtk.Label("Question types: ")
         questionlabel   = gtk.Label("Question: ")
-        answerlabel     = gtk.Label("Answer:")
+        answerlabel     = gtk.Label("Answer: ")
+        decisionlabel   = gtk.Label("You were: ")
 
         # ToggleButtons for difficulty
         easytoggle      = gtk.ToggleButton("Easy")
@@ -100,14 +91,23 @@ class ArithmeticActivity(activity.Activity):
         multiplytoggle.connect("toggled", self.multiply_cb)
 
         # Text entry box for question
-        self.question = gtk.Entry(max=50)
-        self.question.modify_font(pango.FontDescription("Sans 14"))
-        self.question.set_property("editable", False)
+        self.questionentry = gtk.Entry(max=50)
+        self.questionentry.modify_font(pango.FontDescription("Sans 14"))
+        self.questionentry.set_property("editable", False)
         
         # Text entry box for answer
-        self.answer = gtk.Entry(max=50)
-        self.answer.modify_font(pango.FontDescription("Sans 14"))
-        self.answer.connect("activate", self.answer_cb)
+        self.answerentry = gtk.Entry(max=50)
+        self.answerentry.modify_font(pango.FontDescription("Sans 14"))
+        self.answerentry.connect("activate", self.answer_cb)
+
+        # Whether the user was correct
+        self.decisionentry = gtk.Entry(max=50)
+        self.decisionentry.modify_font(pango.FontDescription("Sans 14"))
+        self.decisionentry.set_property("editable", False)
+
+        # Scorekeeping
+        self.correctlabel = gtk.Label("Number of correct answers: ")
+        self.incorrectlabel = gtk.Label("Number of incorrect answers: ")
 
         # Packing
         difficultybox.pack_start(difficultylabel, expand=False)
@@ -122,14 +122,21 @@ class ArithmeticActivity(activity.Activity):
         modebox.pack_start(dividetoggle, expand=False)
 
         questionbox.pack_start(questionlabel, expand=False)
-        questionbox.pack_start(self.question)
+        questionbox.pack_start(self.questionentry)
         answerbox.pack_start(answerlabel, expand=False)
-        answerbox.pack_start(self.answer)
+        answerbox.pack_start(self.answerentry)
+        decisionbox.pack_start(decisionlabel, expand=False)
+        decisionbox.pack_start(self.decisionentry)
+        correctbox.pack_start(self.correctlabel, expand=False)
+        incorrectbox.pack_start(self.incorrectlabel, expand=False)
 
         vbox.pack_start(difficultybox, expand=False) 
         vbox.pack_start(modebox, expand=False)
         vbox.pack_start(questionbox, expand=False) 
         vbox.pack_start(answerbox, expand=False)
+        vbox.pack_start(decisionbox, expand=False)
+        vbox.pack_start(correctbox, expand=False)
+        vbox.pack_start(incorrectbox, expand=False)
         vbox.pack_start(hbox)
 
         # Set defaults for questions.
@@ -140,107 +147,114 @@ class ArithmeticActivity(activity.Activity):
         self.generate_new_question()
 
         self.set_canvas(vbox)
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
         self.show_all()
 
     def generate_new_question(self):
         modelist = list()
         if self.MODE_ADDITION:
-            possible_modes.append("addition")
+            modelist.append("addition")
         if self.MODE_SUBTRACTION:
-            possible_modes.append("subtraction")
+            modelist.append("subtraction")
         if self.MODE_MULTIPLICATION:
-            possible_modes.append("multiplication")
+            modelist.append("multiplication")
         if self.MODE_DIVISION:
-            possible_modes.append("division")
+            modelist.append("division")
 
         difficultylist = list()
         if self.DIFFICULTY_EASY:
-            possible_difficulties.append("easy")
+            difficultylist.append("easy")
         if self.DIFFICULTY_MEDIUM:
-            possible_difficulties.append("medium")
+            difficultylist.append("medium")
         if self.DIFFICULTY_HARD:
-            possible_difficulties.append("hard")
+            difficultylist.append("hard")
         
         mode = random.choice(modelist)
-        logging.debug("mode: " + mode)
         difficulty = random.choice(difficultylist)
-        logging.debug("difficulty choice: " + difficulty)
+        question, self.answer = self.generate_problem(mode, difficulty)
+        self.questionentry.set_text(question)
 
+    def generate_problem(self, mode, difficulty):
         if mode == "addition":
-            self.question.set_text("%s + %s" % self.generate_add(difficulty))
+            x = self.generate_number(difficulty)
+            y = self.generate_number(difficulty)
+            question = "%s + %s" % (x, y)
+            answer = x + y
         elif mode == "subtraction":
-            self.question.set_text("%s - %s" % (self.generate_subtract(difficulty)))
+            x = self.generate_number(difficulty)
+            y = self.generate_number(difficulty)
+            question = "%s - %s" % (x, y)
+            answer = x - y
         elif mode == "multiplication":
-            self.question.set_text("%s x %s" % (self.generate_multiply(difficulty)))
+            x = self.generate_number(difficulty)
+            y = self.generate_number(difficulty)
+            question = "%s x %s" % (x, y)
+            answer = x * y
         elif mode == "division":
-            self.question.set_text("%s / %s" % (self.generate_divide(difficulty)))
+            x = self.generate_number(difficulty)
+            y = self.generate_number(difficulty)
+            question = "%s / %s" % (x, y)
+            answer = x / y
+        else:
+            raise AssertionError
+        return question, answer
 
-    def generate_add(self, difficulty):
+    def generate_number(self, difficulty):
         if difficulty == "easy":
-            return (random.randint(1, 9), random.randint(1, 9))
-        elif difficulty == "medium":
-            return (random.randint(1, 19), random.randint(1, 19))
-        elif difficulty == "hard":
-            return (random.randint(1, 50), random.randint(1,50))
-        
-    def generate_subtract(self, difficulty):
-        if difficulty == "easy":
-            return (random.randint(1, 9), random.randint(1, 9))
-        elif difficulty == "medium":
-            return (random.randint(1, 19), random.randint(1, 19))
-        elif difficulty == "hard":
-            return (random.randint(1, 50), random.randint(1,50))
-
-    def generate_multiply(self, difficulty):
-        if difficulty == "easy":
-            return (random.randint(1, 9), random.randint(1, 9))
-        elif difficulty == "medium":
-            return (random.randint(1, 19), random.randint(1, 19))
-        elif difficulty == "hard":
-            return (random.randint(1, 50), random.randint(1,50))
-
-    def generate_divide(self, difficulty):
-        if difficulty == "easy":
-            return (random.randint(1, 9), random.randint(1, 9))
-        elif difficulty == "medium":
-            return (random.randint(1, 19), random.randint(1, 19))
-        elif difficulty == "hard":
-            return (random.randint(1, 50), random.randint(1,50))
-
+            return random.randint(1, 9)
+        if difficulty == "medium":
+            return random.randint(1, 19)
+        if difficulty == "hard":
+            return random.randint(1, 50)
+        else:
+            raise AssertionError
 
     """Callbacks."""
     def answer_cb(self, answer):
-        if not answer:
+        try:
+            answer = int(answer.get_text())
+        except ValueError:
+            self.answerentry.set_text("")
             return
-        logging.debug("in answer_cb, answer is " + answer.get_text())
+
+        if int(answer) == int(self.answer):
+            self.decisionentry.set_text("Correct!")
+            self.numcorrect += 1
+        else:
+            self.decisionentry.set_text("Not correct")
+            self.numincorrect += 1
+
         self.generate_new_question()
-        self.answer.set_text("")
+        self.answerentry.set_text("")
+        self.correctlabel.set_text("Number of correct answers: %s" %
+                                   self.numcorrect)
+        self.incorrectlabel.set_text("Number of incorrect answers: %s" %
+                                     self.numincorrect)
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
 
     def medium_cb(self, toggled):
         self.DIFFICULTY_MEDIUM = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
 
     def hard_cb(self, toggled):
         self.DIFFICULTY_HARD = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
 
     def add_cb(self, toggled):
         self.MODE_ADDITION = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
 
     def subtract_cb(self, toggled):
         self.MODE_SUBTRACTION = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
 
     def multiply_cb(self, toggled):
         self.MODE_MULTIPLICATION = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
 
     def divide_cb(self, toggled):
         self.MODE_DIVISION = toggled.get_active()
-        self.answer.grab_focus()
+        self.answerentry.grab_focus()
