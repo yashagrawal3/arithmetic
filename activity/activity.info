@@ -1,0 +1,7 @@
+[Activity]
+name = Arithmetic
+activity_version = 1
+service_name = org.laptop.Arithmetic
+exec = sugar-activity arithmetic.ArithmeticActivity -s
+icon = activity-log
+license = GPLv2+

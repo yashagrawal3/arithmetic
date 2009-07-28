@@ -1,0 +1,55 @@
+16
+
+15
+
+14
+
+13
+
+12
+
+11
+
+10
+
+* fix activity icon 4913
+* a lot of new languages added and some new translations
+
+9
+
+* make users non-olpc be able to read the sugar logs (erikos)
+
+8
+
+7
+
+* Strips ANSI escape codes from logs.
+* New Edit toolbar with Copy, Word wrap toggle & Search.
+* Delete Log added to Tools menu.
+* Notification added after log upload.
+* Watches multiple directories, plus extra files.
+* Organizes logs in tree view by directory.
+* Tree view sorted alphabetically, with special sorting for xxxx-NNN.log files.
+
+5
+
+* Harden logcollect.py with a whole bunch of try...except to always collect as
+  much as possible. (pascal)
+
+4
+
+* logcollect.py now defaults to http://olpc.scheffers.net/olpc/submit.tcl
+* Fix command-line mode and cleanup 'usage' after rename from log-collect.py
+* Default text font size
+
+3
+
+* Read check permission
+
+2
+
+* Drop presence and network
+
+1
+
+* Initial Version
