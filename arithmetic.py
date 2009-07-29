@@ -20,7 +20,7 @@ import gtk
 import pango
 import random
 from gettext import gettext as _
-
+from olpcgames import mesh
 from sugar.activity import activity
 
 # Should be builtin to sugar.graphics.alert.NotifyAlert...
@@ -50,9 +50,7 @@ class ArithmeticActivity(activity.Activity):
         vbox = gtk.VBox()
 
         # Toolbar
-        toolbox = activity.ActivityToolbox(self)
-        self.set_toolbox(toolbox)
-        toolbox.show()
+        toolbox = self.build_toolbar()
 
         # Horizontal fields
         difficultybox = gtk.HBox()
@@ -182,7 +180,7 @@ class ArithmeticActivity(activity.Activity):
             answer = x + y
         elif mode == "subtraction":
             x = self.generate_number(difficulty)
-            y = self.generate_number(difficulty)
+            y = self.generate_number(difficulty, x)
             question = "%s - %s" % (x, y)
             answer = x - y
         elif mode == "multiplication":
@@ -199,13 +197,13 @@ class ArithmeticActivity(activity.Activity):
             raise AssertionError
         return question, answer
 
-    def generate_number(self, difficulty):
+    def generate_number(self, difficulty, lessthan=0):
         if difficulty == "easy":
-            return random.randint(1, 9)
+            return random.randint(1, lessthan or 9)
         if difficulty == "medium":
-            return random.randint(1, 19)
+            return random.randint(1, lessthan or 19)
         if difficulty == "hard":
-            return random.randint(1, 50)
+            return random.randint(1, lessthan or 50)
         else:
             raise AssertionError
 
@@ -230,6 +228,12 @@ class ArithmeticActivity(activity.Activity):
                                    self.numcorrect)
         self.incorrectlabel.set_text("Number of incorrect answers: %s" %
                                      self.numincorrect)
+
+        participants = mesh.get_participants()
+        logging.error("participants are: %s" % participants)
+        for handle in participants:
+            buddy = mesh.get_buddy(handle)
+            logging.error(buddy.props.nick)
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
@@ -258,3 +262,31 @@ class ArithmeticActivity(activity.Activity):
     def divide_cb(self, toggled):
         self.MODE_DIVISION = toggled.get_active()
         self.answerentry.grab_focus()
+
+    def build_toolbar( self ):
+        """Build our Activity toolbar for the Sugar system
+
+        This is a customisation point for those games which want to
+        provide custom toolbars when running under Sugar.
+        """
+        toolbar = activity.ActivityToolbar(self)
+        toolbar.show()
+        self.set_toolbox(toolbar)
+        def shared_cb(*args, **kwargs):
+            logging.error( 'shared: %s, %s', args, kwargs )
+            mesh.activity_shared(self)
+
+        def joined_cb(*args, **kwargs):
+            logging.error( 'joined: %s, %s', args, kwargs )
+            mesh.activity_joined(self)
+
+        self.connect("shared", shared_cb)
+        self.connect("joined", joined_cb)
+
+        if self.get_shared():
+            # if set at this point, it means we've already joined (i.e.,
+            # launched from Neighborhood)
+            joined_cb()
+
+        toolbar.title.unset_flags(gtk.CAN_FOCUS)
+        return toolbar
