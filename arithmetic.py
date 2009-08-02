@@ -4,27 +4,17 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """Arithmetic Activity: A quiz activity for arithmetic."""
 
 import logging
 import gtk
 import pango
 import random
+import gobject
+import time
+
 from gettext import gettext as _
 from sugar.activity import activity
-
-# Should be builtin to sugar.graphics.alert.NotifyAlert...
-def _notify_response_cb(notify, response, activity):
-    activity.remove_alert(notify)
 
 class ArithmeticActivity(activity.Activity):
     """Arithmetic Activity as specified in activity.info"""
@@ -42,6 +32,10 @@ class ArithmeticActivity(activity.Activity):
         self._logger = logging.getLogger('arithmetic-activity')
         self.numcorrect = 0
         self.numincorrect = 0
+        self.starttime = 0
+        self.endtime = 0
+        self.secondsleft = ""
+        self.question = ""
         self.answer = ""
 
         # Main layout
@@ -52,7 +46,6 @@ class ArithmeticActivity(activity.Activity):
         toolbar.show()
         toolbar.title.unset_flags(gtk.CAN_FOCUS)
         self.set_toolbox(toolbar)
-        toolbox = self.build_toolbar()
 
         # Horizontal fields
         difficultybox = gtk.HBox()
@@ -62,6 +55,8 @@ class ArithmeticActivity(activity.Activity):
         decisionbox   = gtk.HBox()
         correctbox    = gtk.HBox()
         incorrectbox  = gtk.HBox()
+        countdownbox  = gtk.HBox()
+        elapsedbox    = gtk.HBox()
 
         # Labels
         difficultylabel = gtk.Label("Difficulty: ")
@@ -74,7 +69,6 @@ class ArithmeticActivity(activity.Activity):
         easytoggle      = gtk.ToggleButton("Easy")
         mediumtoggle    = gtk.ToggleButton("Medium")
         hardtoggle      = gtk.ToggleButton("Hard")
-
         easytoggle.connect("toggled", self.easy_cb)
         mediumtoggle.connect("toggled", self.medium_cb)
         hardtoggle.connect("toggled", self.hard_cb)
@@ -105,9 +99,10 @@ class ArithmeticActivity(activity.Activity):
         self.decisionentry.modify_font(pango.FontDescription("Sans 14"))
         self.decisionentry.set_property("editable", False)
 
-        # Scorekeeping
         self.correctlabel = gtk.Label("Number of correct answers: ")
         self.incorrectlabel = gtk.Label("Number of incorrect answers: ")
+        self.countdownlabel = gtk.Label("Time until next question: ")
+        self.elapsedlabel = gtk.Label("Time taken to answer last question: ")
 
         # Packing
         difficultybox.pack_start(difficultylabel, expand=False)
@@ -129,6 +124,8 @@ class ArithmeticActivity(activity.Activity):
         decisionbox.pack_start(self.decisionentry)
         correctbox.pack_start(self.correctlabel, expand=False)
         incorrectbox.pack_start(self.incorrectlabel, expand=False)
+        countdownbox.pack_start(self.countdownlabel, expand=False)
+        elapsedbox.pack_start(self.elapsedlabel, expand=False)
 
         vbox.pack_start(difficultybox, expand=False) 
         vbox.pack_start(modebox, expand=False)
@@ -137,6 +134,8 @@ class ArithmeticActivity(activity.Activity):
         vbox.pack_start(decisionbox, expand=False)
         vbox.pack_start(correctbox, expand=False)
         vbox.pack_start(incorrectbox, expand=False)
+        vbox.pack_start(countdownbox, expand=False)
+        vbox.pack_start(elapsedbox, expand=False)
         vbox.pack_start(hbox)
 
         # Set defaults for questions.
@@ -145,6 +144,7 @@ class ArithmeticActivity(activity.Activity):
 
         # Make a new question.
         self.generate_new_question()
+        self.start_question()
 
         self.set_canvas(vbox)
         self.answerentry.grab_focus()
@@ -168,11 +168,10 @@ class ArithmeticActivity(activity.Activity):
             difficultylist.append("medium")
         if self.DIFFICULTY_HARD:
             difficultylist.append("hard")
-        
+
         mode = random.choice(modelist)
         difficulty = random.choice(difficultylist)
-        question, self.answer = self.generate_problem(mode, difficulty)
-        self.questionentry.set_text(question)
+        self.question, self.answer = self.generate_problem(mode, difficulty)
 
     def generate_problem(self, mode, difficulty):
         if mode == "addition":
@@ -209,13 +208,15 @@ class ArithmeticActivity(activity.Activity):
         else:
             raise AssertionError
 
-    """Callbacks."""
-    def answer_cb(self, answer):
+    def solve (self, answer):
         try:
             answer = int(answer.get_text())
         except ValueError:
             self.answerentry.set_text("")
             return
+
+        self.endtime = time.time()
+        self.elapsedlabel.set_text("Time taken to answer last question: %s" % (self.endtime - self.starttime))
 
         if int(answer) == int(self.answer):
             self.decisionentry.set_text("Correct!")
@@ -224,12 +225,36 @@ class ArithmeticActivity(activity.Activity):
             self.decisionentry.set_text("Not correct")
             self.numincorrect += 1
 
+
+    """Callbacks."""
+    def answer_cb(self, answer):
+        self.solve(answer)
         self.generate_new_question()
         self.answerentry.set_text("")
         self.correctlabel.set_text("Number of correct answers: %s" %
                                    self.numcorrect)
         self.incorrectlabel.set_text("Number of incorrect answers: %s" %
                                      self.numincorrect)
+        self.start_countdown()
+
+    def start_countdown(self):
+        self.questionentry.set_text("")
+        self.secondsleft = 3
+        self.countdownlabel.set_text("Time until next question: %s" % self.secondsleft)
+        gobject.timeout_add(1000, self.countdown_cb)
+
+    def countdown_cb(self):
+        self.secondsleft -= 1
+        self.countdownlabel.set_text("Time until next question: %s" % self.secondsleft)
+        if self.secondsleft == 0:
+            self.start_question()
+            return False
+        else:
+            return True
+
+    def start_question(self):
+        self.starttime = time.time()
+        self.questionentry.set_text(self.question)
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
@@ -258,4 +283,3 @@ class ArithmeticActivity(activity.Activity):
     def divide_cb(self, toggled):
         self.MODE_DIVISION = toggled.get_active()
         self.answerentry.grab_focus()
-
