@@ -12,6 +12,7 @@ import pango
 import random
 import gobject
 import time
+import groupthink
 
 from gettext import gettext as _
 from sugar.activity import activity

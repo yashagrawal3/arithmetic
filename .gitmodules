@@ -1,0 +1,3 @@
+[submodule "dobject"]
+	path = dobject
+	url = git+ssh://bemasc@dev.laptop.org/git/projects/dobject
