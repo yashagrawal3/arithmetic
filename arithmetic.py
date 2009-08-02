@@ -20,7 +20,6 @@ import gtk
 import pango
 import random
 from gettext import gettext as _
-from olpcgames import mesh
 from sugar.activity import activity
 
 # Should be builtin to sugar.graphics.alert.NotifyAlert...
@@ -49,7 +48,10 @@ class ArithmeticActivity(activity.Activity):
         hbox = gtk.HBox(homogeneous=True)
         vbox = gtk.VBox()
 
-        # Toolbar
+        toolbar = activity.ActivityToolbar(self)
+        toolbar.show()
+        toolbar.title.unset_flags(gtk.CAN_FOCUS)
+        self.set_toolbox(toolbar)
         toolbox = self.build_toolbar()
 
         # Horizontal fields
@@ -82,7 +84,7 @@ class ArithmeticActivity(activity.Activity):
         subtracttoggle  = gtk.ToggleButton("Subtraction")
         multiplytoggle  = gtk.ToggleButton("Multiplication")
         dividetoggle    = gtk.ToggleButton("Division")
-
+ 
         addtoggle.connect("toggled", self.add_cb)
         subtracttoggle.connect("toggled", self.subtract_cb)
         dividetoggle.connect("toggled", self.divide_cb)
@@ -229,12 +231,6 @@ class ArithmeticActivity(activity.Activity):
         self.incorrectlabel.set_text("Number of incorrect answers: %s" %
                                      self.numincorrect)
 
-        participants = mesh.get_participants()
-        logging.error("participants are: %s" % participants)
-        for handle in participants:
-            buddy = mesh.get_buddy(handle)
-            logging.error(buddy.props.nick)
-
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
         self.answerentry.grab_focus()
@@ -263,30 +259,3 @@ class ArithmeticActivity(activity.Activity):
         self.MODE_DIVISION = toggled.get_active()
         self.answerentry.grab_focus()
 
-    def build_toolbar( self ):
-        """Build our Activity toolbar for the Sugar system
-
-        This is a customisation point for those games which want to
-        provide custom toolbars when running under Sugar.
-        """
-        toolbar = activity.ActivityToolbar(self)
-        toolbar.show()
-        self.set_toolbox(toolbar)
-        def shared_cb(*args, **kwargs):
-            logging.error( 'shared: %s, %s', args, kwargs )
-            mesh.activity_shared(self)
-
-        def joined_cb(*args, **kwargs):
-            logging.error( 'joined: %s, %s', args, kwargs )
-            mesh.activity_joined(self)
-
-        self.connect("shared", shared_cb)
-        self.connect("joined", joined_cb)
-
-        if self.get_shared():
-            # if set at this point, it means we've already joined (i.e.,
-            # launched from Neighborhood)
-            joined_cb()
-
-        toolbar.title.unset_flags(gtk.CAN_FOCUS)
-        return toolbar
