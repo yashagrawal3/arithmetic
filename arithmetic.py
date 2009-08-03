@@ -11,13 +11,58 @@ import gtk
 import pango
 import random
 import gobject
+import math
 import time
 import groupthink
+import groupthink.sugar_tools
 
 from gettext import gettext as _
 from sugar.activity import activity
+from sugar import profile
 
-class ArithmeticActivity(activity.Activity):
+def score_codec(score_or_opaque, pack_or_unpack):
+    v = score_or_opaque
+    if pack_or_unpack:
+        return (v.cumulative_score, v.last_score, v.last_time)
+    else:
+        return ImmutableScore(cumulative_score=v[0],
+                              last_score=v[1],
+                              last_time=v[2],
+                              )
+
+class ImmutableScore(object):
+    """An immutable representation of scores suitable for
+    synchronization through Groupthink. The codec function
+    is named score_codec."""
+    
+    def __init__(self, old_score = None, cumulative_score=0, last_score=0, last_time=0.0):
+        """Immutable objects may be constructed in absolute or relative terms.
+        Absolute terms are used when old_score is None.
+        Relative terms are used when old_score is an ImmutableScore.
+        """
+        attrs = [("cumulative_score", lambda a,b: a+b),
+                 ("last_score", lambda a,b: b),
+                 ("last_time", lambda a,b: b)]
+        if old_score is not None:
+            for a, u in attrs:
+                setattr(self, '_'+a, u(getattr(old_score, a), locals()[k]))
+        else:
+            for a, u in attrs:
+                setattr(self, '_'+a, locals()[a])
+        
+    def _get_cumulative_score(self):
+        return self._cumulative_score
+    cumulative_score = property(_get_cumulative_score)
+
+    def _get_last_score(self):
+        return self._last_score
+    last_score = property(_get_last_score)
+        
+    def _get_last_time(self):
+        return self._last_time
+    last_time = property(_get_last_time)
+               
+class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     """Arithmetic Activity as specified in activity.info"""
     DIFFICULTY_EASY     = False
     DIFFICULTY_MEDIUM   = False
@@ -32,21 +77,51 @@ class ArithmeticActivity(activity.Activity):
         super(ArithmeticActivity, self).__init__(handle)
         self._logger = logging.getLogger('arithmetic-activity')
         self.numcorrect = 0
-        self.numincorrect = 0
         self.starttime = 0
         self.endtime = 0
         self.secondsleft = ""
         self.question = ""
         self.answer = ""
+        self.cloud.scoreboard = groupthink.CausalDict(value_translator=score_codec)
+        self.scoreboard = self.cloud.scoreboard
+        self.mynickname = profile.get_nick_name()
+        self.scoreboard[self.mynickname] = ImmutableScore()
 
         # Main layout
         hbox = gtk.HBox(homogeneous=True)
         vbox = gtk.VBox()
-
+        
         toolbar = activity.ActivityToolbar(self)
         toolbar.show()
         toolbar.title.unset_flags(gtk.CAN_FOCUS)
         self.set_toolbox(toolbar)
+
+        # Scoreboard
+        scorebox = gtk.VBox()
+        self.model = gtk.TreeStore(gobject.TYPE_STRING, # name
+                                   gobject.TYPE_INT,    # last round score
+                                   gobject.TYPE_INT,    # total score
+                                   gobject.TYPE_FLOAT)  # time for last question
+        treeview = gtk.TreeView(self.model)
+        cellrenderer = gtk.CellRendererText()
+        col1 = gtk.TreeViewColumn(_("Name"), cellrenderer, text=0)
+        col2 = gtk.TreeViewColumn(_("Round score"), cellrenderer, text=1)
+        col3 = gtk.TreeViewColumn(_("Total score"), cellrenderer, text=2)
+        col4 = gtk.TreeViewColumn(_("Time for answering last question"), cellrenderer, text=3)
+        treeview.append_column(col1)
+        treeview.append_column(col2)
+        treeview.append_column(col3)
+        treeview.append_column(col4)
+
+        my_score = self.scoreboard[self.mynickname]
+        
+        self.olditer = self.model.insert_before(None, None)
+        self.model.set_value(self.olditer, 0, self.mynickname)
+        self.model.set_value(self.olditer, 1, my_score.last_score)
+        self.model.set_value(self.olditer, 2, my_score.cumulative_score)
+        self.model.set_value(self.olditer, 3, my_score.last_time)
+        treeview.expand_all()
+        scorebox.pack_start(treeview)
 
         # Horizontal fields
         difficultybox = gtk.HBox()
@@ -55,7 +130,6 @@ class ArithmeticActivity(activity.Activity):
         answerbox     = gtk.HBox()
         decisionbox   = gtk.HBox()
         correctbox    = gtk.HBox()
-        incorrectbox  = gtk.HBox()
         countdownbox  = gtk.HBox()
         elapsedbox    = gtk.HBox()
 
@@ -101,7 +175,6 @@ class ArithmeticActivity(activity.Activity):
         self.decisionentry.set_property("editable", False)
 
         self.correctlabel = gtk.Label("Number of correct answers: ")
-        self.incorrectlabel = gtk.Label("Number of incorrect answers: ")
         self.countdownlabel = gtk.Label("Time until next question: ")
         self.elapsedlabel = gtk.Label("Time taken to answer last question: ")
 
@@ -124,7 +197,6 @@ class ArithmeticActivity(activity.Activity):
         decisionbox.pack_start(decisionlabel, expand=False)
         decisionbox.pack_start(self.decisionentry)
         correctbox.pack_start(self.correctlabel, expand=False)
-        incorrectbox.pack_start(self.incorrectlabel, expand=False)
         countdownbox.pack_start(self.countdownlabel, expand=False)
         elapsedbox.pack_start(self.elapsedlabel, expand=False)
 
@@ -134,10 +206,9 @@ class ArithmeticActivity(activity.Activity):
         vbox.pack_start(answerbox, expand=False)
         vbox.pack_start(decisionbox, expand=False)
         vbox.pack_start(correctbox, expand=False)
-        vbox.pack_start(incorrectbox, expand=False)
         vbox.pack_start(countdownbox, expand=False)
         vbox.pack_start(elapsedbox, expand=False)
-        vbox.pack_start(hbox)
+        vbox.pack_start(scorebox)
 
         # Set defaults for questions.
         easytoggle.set_active(True)
@@ -192,9 +263,9 @@ class ArithmeticActivity(activity.Activity):
             answer = x * y
         elif mode == "division":
             x = self.generate_number(difficulty)
-            y = self.generate_number(difficulty)
-            question = "%s / %s" % (x, y)
-            answer = x / y
+            y = int(math.ceil(self.generate_number(difficulty) / 2))
+            question = "%s / %s" % (x*y, x)
+            answer = y
         else:
             raise AssertionError
         return question, answer
@@ -217,14 +288,22 @@ class ArithmeticActivity(activity.Activity):
             return
 
         self.endtime = time.time()
-        self.elapsedlabel.set_text("Time taken to answer last question: %s" % (self.endtime - self.starttime))
-
+        self.elapsedlabel.set_text("Time taken to answer last question: %.2f seconds" % (self.endtime - self.starttime))
+        self.model.set_value(self.olditer, 3, self.endtime - self.starttime)
+        
         if int(answer) == int(self.answer):
             self.decisionentry.set_text("Correct!")
-            self.numcorrect += 1
+            old_score = self.scoreboard[self.mynickname]
+            new_score = ImmutableScore(old_score=old_score,
+                                       cumulative_score=1,
+                                       last_score=1,
+                                       last_time=self.endtime - self.starttime,
+                                       )
+            self.scoreboard[self.mynickname] = new_score
+            self.model.set_value(self.olditer, 1, new_score.cumulative_score)
+            self.model.set_value(self.olditer, 2, new_score.last_score)
         else:
             self.decisionentry.set_text("Not correct")
-            self.numincorrect += 1
 
 
     """Callbacks."""
@@ -233,9 +312,7 @@ class ArithmeticActivity(activity.Activity):
         self.generate_new_question()
         self.answerentry.set_text("")
         self.correctlabel.set_text("Number of correct answers: %s" %
-                                   self.numcorrect)
-        self.incorrectlabel.set_text("Number of incorrect answers: %s" %
-                                     self.numincorrect)
+                                   self.scoreboard[self.mynickname])
         self.start_countdown()
 
     def start_countdown(self):
