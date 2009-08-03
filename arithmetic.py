@@ -45,7 +45,7 @@ class ImmutableScore(object):
                  ("last_time", lambda a,b: b)]
         if old_score is not None:
             for a, u in attrs:
-                setattr(self, '_'+a, u(getattr(old_score, a), locals()[k]))
+                setattr(self, '_'+a, u(getattr(old_score, a), locals()[a]))
         else:
             for a, u in attrs:
                 setattr(self, '_'+a, locals()[a])
@@ -72,6 +72,12 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     MODE_MULTIPLICATION = False
     MODE_DIVISION       = False
 
+    # The two functions below are abstract.
+    #def handle_view_source(self):
+    #    pass
+    #def initialize_display(self):
+    #    pass
+
     def __init__(self, handle):
         """Set up the Arithmetic activity."""
         super(ArithmeticActivity, self).__init__(handle)
@@ -88,7 +94,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.scoreboard[self.mynickname] = ImmutableScore()
 
         # Main layout
-        hbox = gtk.HBox(homogeneous=True)
         vbox = gtk.VBox()
         
         toolbar = activity.ActivityToolbar(self)
@@ -102,7 +107,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
                                    gobject.TYPE_INT,    # last round score
                                    gobject.TYPE_INT,    # total score
                                    gobject.TYPE_FLOAT)  # time for last question
-        treeview = gtk.TreeView(self.model)
+        self.treeview = treeview = gtk.TreeView(self.model)
         cellrenderer = gtk.CellRendererText()
         col1 = gtk.TreeViewColumn(_("Name"), cellrenderer, text=0)
         col2 = gtk.TreeViewColumn(_("Round score"), cellrenderer, text=1)
@@ -300,13 +305,20 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
                                        last_time=self.endtime - self.starttime,
                                        )
             self.scoreboard[self.mynickname] = new_score
-            self.model.set_value(self.olditer, 1, new_score.cumulative_score)
-            self.model.set_value(self.olditer, 2, new_score.last_score)
         else:
             self.decisionentry.set_text("Not correct")
 
+        self.model = gtk.TreeStore(gobject.TYPE_STRING, # name
+                                   gobject.TYPE_INT,    # last round score
+                                   gobject.TYPE_INT,    # total score
+                                   gobject.TYPE_FLOAT)  # time for last question
 
-    """Callbacks."""
+	for person, score in self.scoreboard.iteritems():
+            self.model.append(None, (person, score.last_score, score.cumulative_score, score.last_time))
+
+        self.treeview.set_model(self.model)
+
+    # Callbacks.
     def answer_cb(self, answer):
         self.solve(answer)
         self.generate_new_question()
