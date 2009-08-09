@@ -146,18 +146,18 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         decisionlabel   = gtk.Label("You were: ")
 
         # ToggleButtons for difficulty
-        self.cloud.easytoggle      = gtk.ToggleButton("Easy")
-        self.cloud.mediumtoggle    = gtk.ToggleButton("Medium")
-        self.cloud.hardtoggle      = gtk.ToggleButton("Hard")
+        self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("Easy")
+        self.cloud.mediumtoggle    = groupthink.gtk_tools.SharedToggleButton("Medium")
+        self.cloud.hardtoggle      = groupthink.gtk_tools.SharedToggleButton("Hard")
         self.cloud.easytoggle.connect("toggled", self.easy_cb)
         self.cloud.mediumtoggle.connect("toggled", self.medium_cb)
         self.cloud.hardtoggle.connect("toggled", self.hard_cb)
 
         # ToggleButtons for question type
-        self.cloud.addtoggle       = gtk.ToggleButton("Addition")
-        self.cloud.subtracttoggle  = gtk.ToggleButton("Subtraction")
-        self.cloud.multiplytoggle  = gtk.ToggleButton("Multiplication")
-        self.cloud.dividetoggle    = gtk.ToggleButton("Division")
+        self.cloud.addtoggle       = groupthink.gtk_tools.SharedToggleButton("Addition")
+        self.cloud.subtracttoggle  = groupthink.gtk_tools.SharedToggleButton("Subtraction")
+        self.cloud.multiplytoggle  = groupthink.gtk_tools.SharedToggleButton("Multiplication")
+        self.cloud.dividetoggle    = groupthink.gtk_tools.SharedToggleButton("Division")
  
         self.cloud.addtoggle.connect("toggled", self.add_cb)
         self.cloud.subtracttoggle.connect("toggled", self.subtract_cb)
