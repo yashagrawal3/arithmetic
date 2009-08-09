@@ -14,6 +14,7 @@ import gobject
 import math
 import time
 import groupthink
+import groupthink.gtk_tools
 import groupthink.sugar_tools
 
 from gettext import gettext as _
