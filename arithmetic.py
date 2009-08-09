@@ -79,9 +79,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     #def initialize_display(self):
     #    pass
 
-    def __init__(self, handle):
+    def initialize_display(self):
         """Set up the Arithmetic activity."""
-        super(ArithmeticActivity, self).__init__(handle)
         self._logger = logging.getLogger('arithmetic-activity')
         self.numcorrect = 0
         self.starttime = 0
@@ -101,6 +100,9 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         toolbar.show()
         toolbar.title.unset_flags(gtk.CAN_FOCUS)
         self.set_toolbox(toolbar)
+
+        # Set a startpoint for a shared seed
+        self.cloud.startpoint = groupthink.HighScore(self.timer.time(), 0)
 
         # Scoreboard
         scorebox = gtk.VBox()
@@ -223,12 +225,18 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         # Make a new question.
         self.generate_new_question()
         self.start_question()
-
-        self.set_canvas(vbox)
         self.answerentry.grab_focus()
-        self.show_all()
+        return vbox
+
+    def when_shared(self):
+        logging.error('when_shared')
+        self.cloud.startpoint.set_value(self.timer.time(), 1)
 
     def generate_new_question(self):
+        t0 = self.cloud.startpoint.get_value()
+        N = int((self.timer.time()-t0) / 10)
+        random.seed((t0,N))
+        logging.error(str((t0,N)))
         modelist = list()
         if self.MODE_ADDITION:
             modelist.append("addition")
