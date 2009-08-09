@@ -146,23 +146,23 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         decisionlabel   = gtk.Label("You were: ")
 
         # ToggleButtons for difficulty
-        easytoggle      = gtk.ToggleButton("Easy")
-        mediumtoggle    = gtk.ToggleButton("Medium")
-        hardtoggle      = gtk.ToggleButton("Hard")
-        easytoggle.connect("toggled", self.easy_cb)
-        mediumtoggle.connect("toggled", self.medium_cb)
-        hardtoggle.connect("toggled", self.hard_cb)
+        self.cloud.easytoggle      = gtk.ToggleButton("Easy")
+        self.cloud.mediumtoggle    = gtk.ToggleButton("Medium")
+        self.cloud.hardtoggle      = gtk.ToggleButton("Hard")
+        self.cloud.easytoggle.connect("toggled", self.easy_cb)
+        self.cloud.mediumtoggle.connect("toggled", self.medium_cb)
+        self.cloud.hardtoggle.connect("toggled", self.hard_cb)
 
         # ToggleButtons for question type
-        addtoggle       = gtk.ToggleButton("Addition")
-        subtracttoggle  = gtk.ToggleButton("Subtraction")
-        multiplytoggle  = gtk.ToggleButton("Multiplication")
-        dividetoggle    = gtk.ToggleButton("Division")
+        self.cloud.addtoggle       = gtk.ToggleButton("Addition")
+        self.cloud.subtracttoggle  = gtk.ToggleButton("Subtraction")
+        self.cloud.multiplytoggle  = gtk.ToggleButton("Multiplication")
+        self.cloud.dividetoggle    = gtk.ToggleButton("Division")
  
-        addtoggle.connect("toggled", self.add_cb)
-        subtracttoggle.connect("toggled", self.subtract_cb)
-        dividetoggle.connect("toggled", self.divide_cb)
-        multiplytoggle.connect("toggled", self.multiply_cb)
+        self.cloud.addtoggle.connect("toggled", self.add_cb)
+        self.cloud.subtracttoggle.connect("toggled", self.subtract_cb)
+        self.cloud.dividetoggle.connect("toggled", self.divide_cb)
+        self.cloud.multiplytoggle.connect("toggled", self.multiply_cb)
 
         # Text entry box for question
         self.questionentry = gtk.Entry(max=50)
@@ -185,15 +185,15 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         # Packing
         difficultybox.pack_start(difficultylabel, expand=False)
-        difficultybox.pack_start(easytoggle, expand=False)
-        difficultybox.pack_start(mediumtoggle, expand=False)
-        difficultybox.pack_start(hardtoggle, expand=False)
+        difficultybox.pack_start(self.cloud.easytoggle, expand=False)
+        difficultybox.pack_start(self.cloud.mediumtoggle, expand=False)
+        difficultybox.pack_start(self.cloud.hardtoggle, expand=False)
 
         modebox.pack_start(modelabel, expand=False)
-        modebox.pack_start(addtoggle, expand=False)
-        modebox.pack_start(subtracttoggle, expand=False)
-        modebox.pack_start(multiplytoggle, expand=False)
-        modebox.pack_start(dividetoggle, expand=False)
+        modebox.pack_start(self.cloud.addtoggle, expand=False)
+        modebox.pack_start(self.cloud.subtracttoggle, expand=False)
+        modebox.pack_start(self.cloud.multiplytoggle, expand=False)
+        modebox.pack_start(self.cloud.dividetoggle, expand=False)
 
         questionbox.pack_start(questionlabel, expand=False)
         questionbox.pack_start(self.questionentry)
@@ -216,8 +216,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         vbox.pack_start(scorebox)
 
         # Set defaults for questions.
-        easytoggle.set_active(True)
-        addtoggle.set_active(True)
+        self.cloud.easytoggle.set_active(True)
+        self.cloud.addtoggle.set_active(True)
 
         # Make a new question.
         self.generate_new_question()
