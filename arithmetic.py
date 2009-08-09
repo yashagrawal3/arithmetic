@@ -228,8 +228,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.answerentry.grab_focus()
         return vbox
 
-    def when_shared(self):
-        logging.error('when_shared')
+    def when_initiating_sharing(self):
+        logging.error('when_initiating_sharing')
         self.cloud.startpoint.set_value(self.timer.time(), 1)
 
     def generate_new_question(self):
