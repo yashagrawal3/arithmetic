@@ -29,13 +29,11 @@ def score_codec(score_or_opaque, pack_or_unpack):
     else:
         return ImmutableScore(cumulative_score=v[0],
                               last_score=v[1],
-                              last_time=v[2],
-                              )
+                              last_time=v[2],)
 
 class ImmutableScore(object):
-    """An immutable representation of scores suitable for
-    synchronization through Groupthink. The codec function
-    is named score_codec."""
+    """An immutable representation of scores suitable for synchronization
+    through Groupthink. The codec function is named score_codec."""
     
     def __init__(self, old_score = None, cumulative_score=0, last_score=0, last_time=0.0):
         """Immutable objects may be constructed in absolute or relative terms.
@@ -73,12 +71,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     MODE_SUBTRACTION    = False
     MODE_MULTIPLICATION = False
     MODE_DIVISION       = False
-
-    # The two functions below are abstract.
-    #def handle_view_source(self):
-    #    pass
-    #def initialize_display(self):
-    #    pass
 
     def initialize_display(self):
         """Set up the Arithmetic activity."""
@@ -222,10 +214,32 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         return vbox
 
     def when_initiating_sharing(self):
-        logging.error('when_initiating_sharing')
         self.cloud.startpoint.set_value(self.timer.time(), 1)
 
     def generate_new_question(self):
+        # This requires a fairly large comment.
+        #
+        # There are at least two possible solutions to the problem of
+        # trying to show the same questions on every client at (roughly)
+        # the same time.  They are:
+        #  1)  Share a random seed beforehand and draw questions from it,
+        #      so that everyone gets the same questions.  Synchronize
+        #      clocks to make sure that people are seeing the same
+        #      questions at the same time, and establish that question N
+        #      will start at time starttime + (10 * N).  This requires a
+        #      passable attempt at clock synchronization, but then the
+        #      clients can cease communicating with each other (forever!)
+        #      and still know what question to pop up when.
+        #  2)  Nominate someone to choose the questions, and wait for
+        #      messages from that person that tell you what the question
+        #      is and when you should start it.  This requires a reliable
+        #      network link with relatively low latency, and algorithms
+        #      that can avoid races when people leave and rejoin a game.
+        #
+        # We decided to go for 1), using Groupthink to work out a shared
+        # clock, stating that questions start every ten seconds, and
+        # using a shared seed -- self.cloud.startpoint -- plus a question
+        # index.
         t0 = self.cloud.startpoint.get_value()
         random.seed((t0, self._question_index))
         modelist = list()
@@ -303,12 +317,10 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             new_score = ImmutableScore(old_score=old_score,
                                        cumulative_score=1,
                                        last_score=1,
-                                       last_time=self.endtime - self.starttime,
-                                       )
+                                       last_time=self.endtime - self.starttime,)
             self.scoreboard[self.mynickname] = new_score
         else:
             self.decisionentry.set_text("Not correct")
-
 
     # Callbacks.
     def answer_cb(self, answer, incorrect=False):
