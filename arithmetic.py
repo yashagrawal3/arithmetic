@@ -83,7 +83,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     def initialize_display(self):
         """Set up the Arithmetic activity."""
         self._logger = logging.getLogger('arithmetic-activity')
-        self.numcorrect = 0
         self.starttime = 0
         self.endtime = 0
         self.secondsleft = ""
@@ -139,9 +138,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         questionbox   = gtk.HBox()
         answerbox     = gtk.HBox()
         decisionbox   = gtk.HBox()
-        correctbox    = gtk.HBox()
         countdownbox  = gtk.HBox()
-        elapsedbox    = gtk.HBox()
 
         # Labels
         difficultylabel = gtk.Label("Difficulty: ")
@@ -149,6 +146,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         questionlabel   = gtk.Label("Question: ")
         answerlabel     = gtk.Label("Answer: ")
         decisionlabel   = gtk.Label("You were: ")
+        self.countdownlabel = gtk.Label("Time until next question: ")
 
         # ToggleButtons for difficulty
         self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("Easy")
@@ -184,10 +182,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.decisionentry.modify_font(pango.FontDescription("Sans 14"))
         self.decisionentry.set_property("editable", False)
 
-        self.correctlabel = gtk.Label("Number of correct answers: ")
-        self.countdownlabel = gtk.Label("Time until next question: ")
-        self.elapsedlabel = gtk.Label("Time taken to answer last question: ")
-
         # Packing
         difficultybox.pack_start(difficultylabel, expand=False)
         difficultybox.pack_start(self.cloud.easytoggle, expand=False)
@@ -206,18 +200,14 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         answerbox.pack_start(self.answerentry)
         decisionbox.pack_start(decisionlabel, expand=False)
         decisionbox.pack_start(self.decisionentry)
-        correctbox.pack_start(self.correctlabel, expand=False)
         countdownbox.pack_start(self.countdownlabel, expand=False)
-        elapsedbox.pack_start(self.elapsedlabel, expand=False)
 
         vbox.pack_start(difficultybox, expand=False) 
         vbox.pack_start(modebox, expand=False)
         vbox.pack_start(questionbox, expand=False) 
         vbox.pack_start(answerbox, expand=False)
         vbox.pack_start(decisionbox, expand=False)
-        vbox.pack_start(correctbox, expand=False)
         vbox.pack_start(countdownbox, expand=False)
-        vbox.pack_start(elapsedbox, expand=False)
         vbox.pack_start(scorebox)
 
         # Set defaults for questions.
@@ -305,7 +295,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         self.answergiven = True
         self.endtime = time.time()
-        self.elapsedlabel.set_text("Time taken to answer last question: %.2f seconds" % (self.endtime - self.starttime))
         self.model.set_value(self.olditer, 3, self.endtime - self.starttime)
         
         if not incorrect and int(answer) == int(self.answer):
@@ -320,15 +309,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         else:
             self.decisionentry.set_text("Not correct")
 
-        self.model = gtk.TreeStore(gobject.TYPE_STRING, # name
-                                   gobject.TYPE_INT,    # last round score
-                                   gobject.TYPE_INT,    # total score
-                                   gobject.TYPE_FLOAT)  # time for last question
-
-	for person, score in self.scoreboard.iteritems():
-            self.model.append(None, (person, score.last_score, score.cumulative_score, score.last_time))
-
-        self.treeview.set_model(self.model)
 
     # Callbacks.
     def answer_cb(self, answer, incorrect=False):
@@ -352,6 +332,15 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             self.start_question()
             self.answerentry.set_text("")
 
+        self.model = gtk.TreeStore(gobject.TYPE_STRING, # name
+                                   gobject.TYPE_INT,    # last round score
+                                   gobject.TYPE_INT,    # total score
+                                   gobject.TYPE_FLOAT)  # time for last question
+
+	for person, score in self.scoreboard.iteritems():
+            self.model.append(None, (person, score.last_score, score.cumulative_score, score.last_time))
+
+        self.treeview.set_model(self.model)
         return True
 
     def start_question(self):
@@ -361,7 +350,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.answergiven = False
         self.answerentry.set_text("")
         self.decisionentry.set_text("")
-        self.correctlabel.set_text("Number of correct answers: %s" % self.scoreboard[self.mynickname])
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
