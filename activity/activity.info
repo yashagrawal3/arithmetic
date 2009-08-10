@@ -3,5 +3,5 @@ name = Arithmetic
 activity_version = 1
 service_name = org.laptop.Arithmetic
 exec = sugar-activity arithmetic.ArithmeticActivity -s
-icon = activity-log
+icon = activity-arithmetic
 license = GPLv2+
