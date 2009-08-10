@@ -1,4 +1,5 @@
 # Copyright (C) 2009, Chris Ball <chris@printf.net>
+# Copyright (C) 2009, Benjamin M. Schwartz <bmschwar@fas.harvard.edu>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
