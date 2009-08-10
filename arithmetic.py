@@ -92,6 +92,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.scoreboard = self.cloud.scoreboard
         self.mynickname = profile.get_nick_name()
         self.scoreboard[self.mynickname] = ImmutableScore()
+        self._question_index = 0
 
         # Main layout
         vbox = gtk.VBox()
@@ -225,6 +226,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         # Make a new question.
         self.generate_new_question()
         self.start_question()
+        self.start_countdown()
         self.answerentry.grab_focus()
         return vbox
 
@@ -234,9 +236,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
     def generate_new_question(self):
         t0 = self.cloud.startpoint.get_value()
-        N = int((self.timer.time()-t0) / 10)
-        random.seed((t0,N))
-        logging.error(str((t0,N)))
+        random.seed((t0,self._question_index))
         modelist = list()
         if self.MODE_ADDITION:
             modelist.append("addition")
@@ -294,18 +294,20 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         else:
             raise AssertionError
 
-    def solve (self, answer):
-        try:
-            answer = int(answer.get_text())
-        except ValueError:
-            self.answerentry.set_text("")
-            return
+    def solve (self, answer, incorrect=False):
+        if not incorrect:
+            try:
+                answer = int(answer.get_text())
+            except ValueError:
+                self.answerentry.set_text("")
+                return
 
+        self.answergiven = True
         self.endtime = time.time()
         self.elapsedlabel.set_text("Time taken to answer last question: %.2f seconds" % (self.endtime - self.starttime))
         self.model.set_value(self.olditer, 3, self.endtime - self.starttime)
         
-        if int(answer) == int(self.answer):
+        if not incorrect and int(answer) == int(self.answer):
             self.decisionentry.set_text("Correct!")
             old_score = self.scoreboard[self.mynickname]
             new_score = ImmutableScore(old_score=old_score,
@@ -328,32 +330,37 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.treeview.set_model(self.model)
 
     # Callbacks.
-    def answer_cb(self, answer):
-        self.solve(answer)
-        self.generate_new_question()
-        self.answerentry.set_text("")
-        self.correctlabel.set_text("Number of correct answers: %s" %
-                                   self.scoreboard[self.mynickname])
-        self.start_countdown()
+    def answer_cb(self, answer, incorrect=False):
+        self.solve(answer, incorrect)
 
     def start_countdown(self):
-        self.questionentry.set_text("")
-        self.secondsleft = 3
+        self.secondsleft = 10
         self.countdownlabel.set_text("Time until next question: %s" % self.secondsleft)
-        gobject.timeout_add(1000, self.countdown_cb)
+        gobject.timeout_add(1000, self.onesecond_cb)
 
-    def countdown_cb(self):
-        self.secondsleft -= 1
+    def onesecond_cb(self):
+        elapsed_time = self.timer.time() - self.cloud.startpoint.get_value()
+        curr_index = int(math.floor(elapsed_time/10))
+        time_to_next = 10 - (elapsed_time - (10*curr_index))
+        self.secondsleft = int(math.ceil(time_to_next))
         self.countdownlabel.set_text("Time until next question: %s" % self.secondsleft)
-        if self.secondsleft == 0:
+        if curr_index != self._question_index:
+            self._question_index = curr_index
+            if self.answergiven == False:
+                self.answer_cb(0, incorrect=True)
             self.start_question()
-            return False
-        else:
-            return True
+            self.answerentry.set_text("")
+
+        return True
 
     def start_question(self):
         self.starttime = time.time()
+        self.generate_new_question()
         self.questionentry.set_text(self.question)
+        self.answergiven = False
+        self.answerentry.set_text("")
+        self.decisionentry.set_text("")
+        self.correctlabel.set_text("Number of correct answers: %s" % self.scoreboard[self.mynickname])
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
