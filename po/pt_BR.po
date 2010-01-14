@@ -1,0 +1,39 @@
+# Arithmetic 
+# Copyright (C) 2009 
+# This file is distributed under the same license as the PACKAGE package.
+# Chris Ball <cjb@laptop.org>
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-12-17 10:59-0500\n"
+"PO-Revision-Date: 2010-01-11 20:49-0400\n"
+"Last-Translator: Robson Mendonça <robsonmwoc@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 1.2.1\n"
+
+#: activity/activity.info:2
+msgid "Arithmetic"
+msgstr "Aritmética"
+
+#: /home/cjb/git/mainline/arithmetic.py:108
+msgid "Name"
+msgstr "Nome"
+
+#: /home/cjb/git/mainline/arithmetic.py:109
+#, fuzzy
+msgid "Round score"
+msgstr "Placar aproximado"
+
+#: /home/cjb/git/mainline/arithmetic.py:110
+msgid "Total score"
+msgstr "Placar total"
+
+#: /home/cjb/git/mainline/arithmetic.py:111
+msgid "Time for answering last question"
+msgstr "Tempo gasto para resolver a última questão"
