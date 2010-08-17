@@ -163,8 +163,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.cloud.puzzles.register_listener(self.new_puzzles_cb)
 
         # Text entry box for question
-        self.questionentry = gtk.Entry(max=50)
-        self.questionentry.modify_font(pango.FontDescription("Sans 14"))
+        self.questionentry = gtk.TextView()
+        self.questionentry.modify_font(pango.FontDescription("Mono 14"))
         self.questionentry.set_property("editable", False)
 
         # Text entry box for answer
@@ -335,7 +335,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     def start_question(self):
         self.starttime = time.time()
         self.generate_new_question()
-        self.questionentry.set_text(self.question)
+        self.questionentry.get_buffer().set_text(self.question)
         self.answergiven = False
         self.answerentry.set_text("")
         self.decisionentry.set_text("")

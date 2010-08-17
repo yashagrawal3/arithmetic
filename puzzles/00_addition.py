@@ -4,6 +4,6 @@ name = "Addition"
 def get_problem(self, difficulty):
     x = self.generate_number(difficulty)
     y = self.generate_number(difficulty)
-    question = "%s + %s" % (x, y)
+    question = "  %2d\n+ %2d" % (x, y)
     answer = x + y
     return question, answer
