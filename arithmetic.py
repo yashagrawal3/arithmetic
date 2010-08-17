@@ -34,7 +34,7 @@ def score_codec(score_or_opaque, pack_or_unpack):
 class ImmutableScore(object):
     """An immutable representation of scores suitable for synchronization
     through Groupthink. The codec function is named score_codec."""
-    
+
     def __init__(self, old_score = None, cumulative_score=0, last_score=0, last_time=0.0):
         """Immutable objects may be constructed in absolute or relative terms.
         Absolute terms are used when old_score is None.
@@ -49,7 +49,7 @@ class ImmutableScore(object):
         else:
             for a, u in attrs:
                 setattr(self, '_'+a, locals()[a])
-        
+
     def _get_cumulative_score(self):
         return self._cumulative_score
     cumulative_score = property(_get_cumulative_score)
@@ -57,11 +57,11 @@ class ImmutableScore(object):
     def _get_last_score(self):
         return self._last_score
     last_score = property(_get_last_score)
-        
+
     def _get_last_time(self):
         return self._last_time
     last_time = property(_get_last_time)
-               
+
 class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     """Arithmetic Activity as specified in activity.info"""
     DIFFICULTY_EASY     = False
@@ -88,7 +88,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         # Main layout
         vbox = gtk.VBox()
-        
+
         toolbar = activity.ActivityToolbar(self)
         toolbar.show()
         toolbar.title.unset_flags(gtk.CAN_FOCUS)
@@ -115,7 +115,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         treeview.append_column(col4)
 
         my_score = self.scoreboard[self.mynickname]
-        
+
         self.olditer = self.model.insert_before(None, None)
         self.model.set_value(self.olditer, 0, self.mynickname)
         self.model.set_value(self.olditer, 1, my_score.last_score)
@@ -153,7 +153,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.cloud.subtracttoggle  = groupthink.gtk_tools.SharedToggleButton("Subtraction")
         self.cloud.multiplytoggle  = groupthink.gtk_tools.SharedToggleButton("Multiplication")
         self.cloud.dividetoggle    = groupthink.gtk_tools.SharedToggleButton("Division")
- 
+
         self.cloud.addtoggle.connect("toggled", self.add_cb)
         self.cloud.subtracttoggle.connect("toggled", self.subtract_cb)
         self.cloud.dividetoggle.connect("toggled", self.divide_cb)
@@ -163,7 +163,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.questionentry = gtk.Entry(max=50)
         self.questionentry.modify_font(pango.FontDescription("Sans 14"))
         self.questionentry.set_property("editable", False)
-        
+
         # Text entry box for answer
         self.answerentry = gtk.Entry(max=50)
         self.answerentry.modify_font(pango.FontDescription("Sans 14"))
@@ -194,9 +194,9 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         decisionbox.pack_start(self.decisionentry)
         countdownbox.pack_start(self.countdownlabel, expand=False)
 
-        vbox.pack_start(difficultybox, expand=False) 
+        vbox.pack_start(difficultybox, expand=False)
         vbox.pack_start(modebox, expand=False)
-        vbox.pack_start(questionbox, expand=False) 
+        vbox.pack_start(questionbox, expand=False)
         vbox.pack_start(answerbox, expand=False)
         vbox.pack_start(decisionbox, expand=False)
         vbox.pack_start(countdownbox, expand=False)
@@ -310,7 +310,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.answergiven = True
         self.endtime = time.time()
         self.model.set_value(self.olditer, 3, self.endtime - self.starttime)
-        
+
         if not incorrect and int(answer) == int(self.answer):
             self.decisionentry.set_text("Correct!")
             old_score = self.scoreboard[self.mynickname]
