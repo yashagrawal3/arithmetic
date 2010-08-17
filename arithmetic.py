@@ -7,6 +7,9 @@
 # (at your option) any later version.
 """Arithmetic Activity: A quiz activity for arithmetic."""
 
+from __future__ import with_statement
+import sys
+
 import logging
 import gtk
 import pango
@@ -14,6 +17,9 @@ import random
 import gobject
 import math
 import time
+import os
+import os.path
+import hashlib
 import groupthink
 import groupthink.gtk_tools
 import groupthink.sugar_tools
@@ -67,10 +73,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     DIFFICULTY_EASY     = False
     DIFFICULTY_MEDIUM   = False
     DIFFICULTY_HARD     = False
-    MODE_ADDITION       = False
-    MODE_SUBTRACTION    = False
-    MODE_MULTIPLICATION = False
-    MODE_DIVISION       = False
 
     def initialize_display(self):
         """Set up the Arithmetic activity."""
@@ -85,6 +87,9 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.mynickname = profile.get_nick_name()
         self.scoreboard[self.mynickname] = ImmutableScore()
         self._question_index = 0
+        self._puzzle_hashes = set()
+        self._puzzle_code = {}
+        self._active_mode_hashes = set()
 
         # Main layout
         vbox = gtk.VBox()
@@ -127,6 +132,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         # Horizontal fields
         difficultybox = gtk.HBox()
         modebox       = gtk.HBox()
+        self.inner_modebox = gtk.HBox()
         questionbox   = gtk.HBox()
         answerbox     = gtk.HBox()
         decisionbox   = gtk.HBox()
@@ -144,20 +150,17 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("Easy")
         self.cloud.mediumtoggle    = groupthink.gtk_tools.SharedToggleButton("Medium")
         self.cloud.hardtoggle      = groupthink.gtk_tools.SharedToggleButton("Hard")
+
+        self.cloud.easytoggle.set_active(False)
+        self.cloud.mediumtoggle.set_active(False)
+        self.cloud.hardtoggle.set_active(False)
         self.cloud.easytoggle.connect("toggled", self.easy_cb)
         self.cloud.mediumtoggle.connect("toggled", self.medium_cb)
         self.cloud.hardtoggle.connect("toggled", self.hard_cb)
 
-        # ToggleButtons for question type
-        self.cloud.addtoggle       = groupthink.gtk_tools.SharedToggleButton("Addition")
-        self.cloud.subtracttoggle  = groupthink.gtk_tools.SharedToggleButton("Subtraction")
-        self.cloud.multiplytoggle  = groupthink.gtk_tools.SharedToggleButton("Multiplication")
-        self.cloud.dividetoggle    = groupthink.gtk_tools.SharedToggleButton("Division")
-
-        self.cloud.addtoggle.connect("toggled", self.add_cb)
-        self.cloud.subtracttoggle.connect("toggled", self.subtract_cb)
-        self.cloud.dividetoggle.connect("toggled", self.divide_cb)
-        self.cloud.multiplytoggle.connect("toggled", self.multiply_cb)
+        # Puzzle generators
+        self.cloud.puzzles         = groupthink.AddOnlySet()
+        self.cloud.puzzles.register_listener(self.new_puzzles_cb)
 
         # Text entry box for question
         self.questionentry = gtk.Entry(max=50)
@@ -180,14 +183,10 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         difficultybox.pack_start(self.cloud.mediumtoggle, expand=False)
         difficultybox.pack_start(self.cloud.hardtoggle, expand=False)
 
-        modebox.pack_start(modelabel, expand=False)
-        modebox.pack_start(self.cloud.addtoggle, expand=False)
-        modebox.pack_start(self.cloud.subtracttoggle, expand=False)
-        modebox.pack_start(self.cloud.multiplytoggle, expand=False)
-        modebox.pack_start(self.cloud.dividetoggle, expand=False)
-
         questionbox.pack_start(questionlabel, expand=False)
         questionbox.pack_start(self.questionentry)
+        modebox.pack_start(modelabel, expand=False)
+        modebox.pack_start(self.inner_modebox)
         answerbox.pack_start(answerlabel, expand=False)
         answerbox.pack_start(self.answerentry)
         decisionbox.pack_start(decisionlabel, expand=False)
@@ -203,8 +202,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         vbox.pack_start(scorebox)
 
         # Set defaults for questions.
+        self.setup_puzzles()
         self.cloud.easytoggle.set_active(True)
-        self.cloud.addtoggle.set_active(True)
 
         # Make a new question.
         self.generate_new_question()
@@ -242,15 +241,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         # index.
         t0 = self.cloud.startpoint.get_value()
         random.seed((t0, self._question_index))
-        modelist = list()
-        if self.MODE_ADDITION:
-            modelist.append("addition")
-        if self.MODE_SUBTRACTION:
-            modelist.append("subtraction")
-        if self.MODE_MULTIPLICATION:
-            modelist.append("multiplication")
-        if self.MODE_DIVISION:
-            modelist.append("division")
 
         difficultylist = list()
         if self.DIFFICULTY_EASY:
@@ -260,34 +250,18 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         if self.DIFFICULTY_HARD:
             difficultylist.append("hard")
 
-        mode = random.choice(modelist)
-        difficulty = random.choice(difficultylist)
-        self.question, self.answer = self.generate_problem(mode, difficulty)
+        # This requires a fairly large comment.
+        if len(self._active_mode_hashes) > 0 and len(difficultylist) > 0:
+            mode = random.choice(list(self._active_mode_hashes))
+            difficulty = random.choice(difficultylist)
+            self.question, self.answer = self.generate_problem(mode, difficulty)
+        else:
+            self.question = self.answer = ""
 
     def generate_problem(self, mode, difficulty):
-        if mode == "addition":
-            x = self.generate_number(difficulty)
-            y = self.generate_number(difficulty)
-            question = "%s + %s" % (x, y)
-            answer = x + y
-        elif mode == "subtraction":
-            x = self.generate_number(difficulty)
-            y = self.generate_number(difficulty, x)
-            question = "%s - %s" % (x, y)
-            answer = x - y
-        elif mode == "multiplication":
-            x = self.generate_number(difficulty)
-            y = self.generate_number(difficulty)
-            question = "%s x %s" % (x, y)
-            answer = x * y
-        elif mode == "division":
-            x = self.generate_number(difficulty)
-            y = int(math.ceil(self.generate_number(difficulty) / 2))
-            question = "%s / %s" % (x*y, x)
-            answer = y
-        else:
-            raise AssertionError
-        return question, answer
+        mode_dict = self._puzzle_code[mode]
+        get_problem = mode_dict['get_problem']
+        return get_problem(self, difficulty)
 
     def generate_number(self, difficulty, lessthan=0):
         if difficulty == "easy":
@@ -311,16 +285,19 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.endtime = time.time()
         self.model.set_value(self.olditer, 3, self.endtime - self.starttime)
 
-        if not incorrect and int(answer) == int(self.answer):
-            self.decisionentry.set_text("Correct!")
-            old_score = self.scoreboard[self.mynickname]
-            new_score = ImmutableScore(old_score=old_score,
-                                       cumulative_score=1,
-                                       last_score=1,
-                                       last_time=self.endtime - self.starttime,)
-            self.scoreboard[self.mynickname] = new_score
-        else:
-            self.decisionentry.set_text("Not correct")
+        try:
+            if not incorrect and int(answer) == int(self.answer):
+                self.decisionentry.set_text("Correct!")
+                old_score = self.scoreboard[self.mynickname]
+                new_score = ImmutableScore(old_score=old_score,
+                                           cumulative_score=1,
+                                           last_score=1,
+                                           last_time=self.endtime - self.starttime,)
+                self.scoreboard[self.mynickname] = new_score
+            else:
+                self.decisionentry.set_text("Not correct")
+        except:
+            self.decisionentry.set_text("Not correct: invalid input")
 
     # Callbacks.
     def answer_cb(self, answer, incorrect=False):
@@ -349,7 +326,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
                                    gobject.TYPE_INT,    # total score
                                    gobject.TYPE_FLOAT)  # time for last question
 
-	for person, score in self.scoreboard.iteritems():
+        for person, score in self.scoreboard.iteritems():
             self.model.append(None, (person, score.last_score, score.cumulative_score, score.last_time))
 
         self.treeview.set_model(self.model)
@@ -375,18 +352,52 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.DIFFICULTY_HARD = toggled.get_active()
         self.answerentry.grab_focus()
 
-    def add_cb(self, toggled):
-        self.MODE_ADDITION = toggled.get_active()
+    def puzzle_toggle_cb(self, toggled, puzzle_hash):
+        if toggled.get_active():
+            self._active_mode_hashes.add(puzzle_hash)
+        else:
+            self._active_mode_hashes.remove(puzzle_hash)
         self.answerentry.grab_focus()
 
-    def subtract_cb(self, toggled):
-        self.MODE_SUBTRACTION = toggled.get_active()
-        self.answerentry.grab_focus()
+    def setup_puzzles(self):
+        puzzle_names = os.listdir("puzzles")
+        puzzle_names.sort()
+        for name in puzzle_names:
+            if name.endswith(".py"):
+                path = os.path.join("puzzles", name)
+                with open(path, 'r') as file:
+                    text = file.read()
+                    self.cloud.puzzles.add(text)
+                    self.new_puzzles_cb(set([text]))
+        self.start_question()
+        self.start_countdown()
 
-    def multiply_cb(self, toggled):
-        self.MODE_MULTIPLICATION = toggled.get_active()
-        self.answerentry.grab_focus()
+    def new_puzzles_cb(self, puzzles):
+        for text in puzzles:
+            if text.strip() == '':
+                continue
 
-    def divide_cb(self, toggled):
-        self.MODE_DIVISION = toggled.get_active()
-        self.answerentry.grab_focus()
+            md = hashlib.sha1()
+            md.update(text)
+            hash = md.digest().encode("hex")
+
+            if hash not in self._puzzle_hashes:
+                self._puzzle_hashes.add(hash)
+
+                env_global = {}
+                env_local = {}
+                exec text in env_global, env_local
+
+                togglename = hash + "_toggle"
+                self.cloud[togglename] = groupthink.gtk_tools.SharedToggleButton(env_local['name'])
+                self.cloud[togglename].set_active(False)
+                self.cloud[togglename].connect("toggled", self.puzzle_toggle_cb, hash)
+
+                self._puzzle_code[hash] = env_local
+
+                old_size = len(self.inner_modebox.get_children())
+                self.inner_modebox.pack_start(self.cloud[togglename], expand=False)
+                new_size = len(self.inner_modebox.get_children())
+
+                if old_size == 0 and new_size == 1:
+                    self.cloud[togglename].set_active(True)
