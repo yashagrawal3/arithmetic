@@ -137,6 +137,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self._logger = logging.getLogger('arithmetic-activity')
         self.starttime = 0
         self.endtime = 0
+        self.period = 10
         self.secondsleft = ""
         self.question = ""
         self.answer = ""
@@ -278,7 +279,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         #      so that everyone gets the same questions.  Synchronize
         #      clocks to make sure that people are seeing the same
         #      questions at the same time, and establish that question N
-        #      will start at time starttime + (10 * N).  This requires a
+        #      will start at time starttime + (period * N).  This requires a
         #      passable attempt at clock synchronization, but then the
         #      clients can cease communicating with each other (forever!)
         #      and still know what question to pop up when.
@@ -357,14 +358,14 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.solve(answer, incorrect)
 
     def start_countdown(self):
-        self.secondsleft = 10
+        self.secondsleft = self.period
         gobject.timeout_add(1000, self.onesecond_cb)
         self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>s' % self.secondsleft)
 
     def onesecond_cb(self):
         elapsed_time = self.timer.time() - self.cloud.startpoint.get_value()
-        curr_index = int(math.floor(elapsed_time/10))
-        time_to_next = 10 - (elapsed_time - (10*curr_index))
+        curr_index = int(math.floor(elapsed_time/self.period))
+        time_to_next = self.period - (elapsed_time - (self.period*curr_index))
         self.secondsleft = int(math.ceil(time_to_next))
         self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>s' % self.secondsleft)
         if curr_index != self._question_index:
