@@ -1,4 +1,4 @@
-name = "Division"
+name = "/"
 
 def get_problem(self, difficulty):
     import math

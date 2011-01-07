@@ -1,4 +1,4 @@
-name = "Multiplication"
+name = "x"
 
 def get_problem(self, difficulty):
     x = self.generate_number(difficulty)

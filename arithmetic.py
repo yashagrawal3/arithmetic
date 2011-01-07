@@ -150,9 +150,9 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.countdownlabel = gtk.Label("Time until next question: ")
 
         # ToggleButtons for difficulty
-        self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("Easy")
-        self.cloud.mediumtoggle    = groupthink.gtk_tools.SharedToggleButton("Medium")
-        self.cloud.hardtoggle      = groupthink.gtk_tools.SharedToggleButton("Hard")
+        self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("< 10")
+        self.cloud.mediumtoggle    = groupthink.gtk_tools.SharedToggleButton("< 20")
+        self.cloud.hardtoggle      = groupthink.gtk_tools.SharedToggleButton("< 50")
 
         self.cloud.easytoggle.set_active(False)
         self.cloud.mediumtoggle.set_active(False)
