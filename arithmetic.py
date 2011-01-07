@@ -359,14 +359,14 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     def start_countdown(self):
         self.secondsleft = 10
         gobject.timeout_add(1000, self.onesecond_cb)
-        self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>' % self.secondsleft)
+        self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>s' % self.secondsleft)
 
     def onesecond_cb(self):
         elapsed_time = self.timer.time() - self.cloud.startpoint.get_value()
         curr_index = int(math.floor(elapsed_time/10))
         time_to_next = 10 - (elapsed_time - (10*curr_index))
         self.secondsleft = int(math.ceil(time_to_next))
-        self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>' % self.secondsleft)
+        self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>s' % self.secondsleft)
         if curr_index != self._question_index:
             self._question_index = curr_index
             if self.answergiven == False:
