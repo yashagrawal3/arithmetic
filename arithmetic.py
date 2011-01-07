@@ -31,6 +31,16 @@ from gettext import gettext as _
 from sugar.activity import activity
 from sugar import profile
 
+try:
+    # 0.86+ toolbar widgets
+    from sugar.activity.widgets import ActivityToolbarButton, StopButton
+    from sugar.graphics.toolbarbox import ToolbarBox, ToolbarButton
+    _USE_OLD_TOOLBARS = False
+except ImportError:
+    # Pre-0.86 toolbar widgets
+    from sugar.activity.activity import ActivityToolbox
+    _USE_OLD_TOOLBARS = True
+
 def score_codec(score_or_opaque, pack_or_unpack):
     v = score_or_opaque
     if pack_or_unpack:
@@ -77,6 +87,51 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     DIFFICULTY_MEDIUM   = False
     DIFFICULTY_HARD     = False
 
+    def __init__(self, handle):
+        super(ArithmeticActivity, self).__init__(handle)
+
+        self._configure_toolbars()
+
+    def _configure_toolbars(self):
+        if _USE_OLD_TOOLBARS:
+            toolbox = ActivityToolbox(self)
+            toolbar = gtk.Toolbar()
+        else:
+            toolbar_box = ToolbarBox()
+            toolbar = toolbar_box.toolbar
+
+            activity_button = ActivityToolbarButton(self)
+            toolbar_box.toolbar.insert(activity_button, 0)
+            activity_button.show()
+
+            self._add_expander(toolbar_box.toolbar)
+
+            toolbar.add(gtk.SeparatorToolItem())
+
+        if _USE_OLD_TOOLBARS:
+            toolbox.add_toolbar(_("Game"), toolbar)
+            toolbox.set_current_toolbar(1)
+
+            self.set_toolbox(toolbox)
+            toolbox.show()
+        else:
+            stop_button = StopButton(self)
+            stop_button.props.accelerator = '<Ctrl><Shift>Q'
+            toolbar_box.toolbar.insert(stop_button, -1)
+            stop_button.show()
+
+            self.set_toolbar_box(toolbar_box)
+            toolbar_box.show()
+
+    def _add_expander(self, toolbar):
+        """Insert a toolbar item which will expand to fill the available
+        space."""
+        separator = gtk.SeparatorToolItem()
+        separator.props.draw = False
+        separator.set_expand(True)
+        toolbar.insert(separator, -1)
+        separator.show()
+
     def initialize_display(self):
         """Set up the Arithmetic activity."""
         self._logger = logging.getLogger('arithmetic-activity')
@@ -96,11 +151,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         # Main layout
         vbox = gtk.VBox()
-
-        toolbar = activity.ActivityToolbar(self)
-        toolbar.show()
-        toolbar.title.unset_flags(gtk.CAN_FOCUS)
-        self.set_toolbox(toolbar)
 
         # Set a startpoint for a shared seed
         self.cloud.startpoint = groupthink.HighScore(self.timer.time(), 0)
