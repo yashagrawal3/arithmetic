@@ -136,8 +136,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         try:
             period = self.cloud.periodentry.get_text()
             period = int(period)
-            if period < 2 or period > 60:
-                raise ValueError("bad period")
         except:
             period = 10
         return period
@@ -232,6 +230,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.cloud.periodentry.modify_font(pango.FontDescription("Mono 14"))
         self.cloud.periodentry.set_text(str(self.period))
         self.cloud.periodentry.set_width_chars(2)
+        self.cloud.periodentry.connect("changed", self._period_cb)
 
         # Puzzle generators
         self.cloud.puzzles         = groupthink.AddOnlySet()
@@ -383,6 +382,15 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             self.decisionentry.set_text("Not correct: invalid input")
 
     # Callbacks.
+    def _period_cb(self, _):
+        try:
+            period = self.cloud.periodentry.get_text()
+            period = int(period)
+            if   period < 1:  self.cloud.periodentry.set_text("10")
+            elif period > 99: self.cloud.periodentry.set_text("60")
+        except:
+            pass
+
     def answer_cb(self, answer, incorrect=False):
         self.solve(answer, incorrect)
 
@@ -422,6 +430,9 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.answergiven = False
         self.answerentry.set_text("")
         self.decisionentry.set_text("")
+
+        if self.cloud.periodentry.get_text() != str(self.secondsleft):
+            self.cloud.periodentry.set_text(str(self.period))
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
