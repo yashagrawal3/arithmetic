@@ -1,5 +1,6 @@
 
 name = "+"
+sort_key = 0
 
 def get_problem(self, difficulty):
     x = self.generate_number(difficulty)

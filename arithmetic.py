@@ -338,6 +338,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             difficulty = random.choice(difficultylist)
             self.question, self.answer = self.generate_problem(mode, difficulty)
         else:
+            self.inner_modebox.get_children()[0].set_active(True)
             self.question = self.answer = ""
 
     def generate_problem(self, mode, difficulty):
@@ -439,7 +440,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             self._active_mode_hashes.add(puzzle_hash)
         else:
             self._active_mode_hashes.remove(puzzle_hash)
-        self.answerentry.grab_focus()
+        if hasattr(self, 'answerentry'):
+            self.answerentry.grab_focus()
 
     def setup_puzzles(self):
         puzzle_names = os.listdir("puzzles")
@@ -474,12 +476,19 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
                 self.cloud[togglename] = groupthink.gtk_tools.SharedToggleButton(env_local['name'])
                 self.cloud[togglename].set_active(False)
                 self.cloud[togglename].connect("toggled", self.puzzle_toggle_cb, hash)
+                self.cloud[togglename].sort_key = env_local['sort_key']
 
                 self._puzzle_code[hash] = env_local
 
-                old_size = len(self.inner_modebox.get_children())
-                self.inner_modebox.pack_start(self.cloud[togglename], expand=False)
-                new_size = len(self.inner_modebox.get_children())
+                kids = self.inner_modebox.get_children()
+                old_size = len(kids)
 
-                if old_size == 0 and new_size == 1:
-                    self.cloud[togglename].set_active(True)
+                for kid in kids:
+                    self.inner_modebox.remove(kid)
+
+                kids.append(self.cloud[togglename])
+
+                kids.sort(key=lambda x: x.sort_key)
+
+                for kid in kids:
+                    self.inner_modebox.pack_start(kid, expand=False)
