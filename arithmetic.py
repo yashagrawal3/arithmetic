@@ -132,12 +132,23 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         toolbar.insert(separator, -1)
         separator.show()
 
+    def _get_period(self):
+        try:
+            period = self.cloud.periodentry.get_text()
+            period = int(period)
+            if period < 2 or period > 60:
+                raise ValueError("bad period")
+        except:
+            period = 10
+        return period
+
+    period = property(_get_period)
+
     def initialize_display(self):
         """Set up the Arithmetic activity."""
         self._logger = logging.getLogger('arithmetic-activity')
         self.starttime = 0
         self.endtime = 0
-        self.period = 10
         self.secondsleft = ""
         self.question = ""
         self.answer = ""
@@ -185,6 +196,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         # Horizontal fields
         difficultybox = gtk.HBox()
+        periodbox     = gtk.HBox()
+        toprowbox     = gtk.HBox()
         modebox       = gtk.HBox()
         self.inner_modebox = gtk.HBox()
         questionbox   = gtk.HBox()
@@ -194,6 +207,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         # Labels
         difficultylabel = gtk.Label("Difficulty: ")
+        periodlabel     = gtk.Label("Period: ")
+        periodunitslabel= gtk.Label(" sec  ")
         modelabel       = gtk.Label("Question types: ")
         questionlabel   = gtk.Label("Question: ")
         answerlabel     = gtk.Label("Answer: ")
@@ -211,6 +226,12 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.cloud.easytoggle.connect("toggled", self.easy_cb)
         self.cloud.mediumtoggle.connect("toggled", self.medium_cb)
         self.cloud.hardtoggle.connect("toggled", self.hard_cb)
+
+        # Entry for puzzle period
+        self.cloud.periodentry = groupthink.gtk_tools.RecentEntry(max=2)
+        self.cloud.periodentry.modify_font(pango.FontDescription("Mono 14"))
+        self.cloud.periodentry.set_text(str(self.period))
+        self.cloud.periodentry.set_width_chars(2)
 
         # Puzzle generators
         self.cloud.puzzles         = groupthink.AddOnlySet()
@@ -237,6 +258,13 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         difficultybox.pack_start(self.cloud.mediumtoggle, expand=False)
         difficultybox.pack_start(self.cloud.hardtoggle, expand=False)
 
+        periodbox.pack_start(periodlabel, expand=False)
+        periodbox.pack_start(self.cloud.periodentry, expand=False)
+        periodbox.pack_start(periodunitslabel, expand=False)
+
+        toprowbox.pack_start(difficultybox, expand=False)
+        toprowbox.pack_end(periodbox, expand=False)
+
         questionbox.pack_start(questionlabel, expand=False)
         questionbox.pack_start(self.questionentry)
         modebox.pack_start(modelabel, expand=False)
@@ -247,7 +275,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         decisionbox.pack_start(self.decisionentry)
         countdownbox.pack_start(self.countdownlabel, expand=False)
 
-        vbox.pack_start(difficultybox, expand=False)
+        vbox.pack_start(toprowbox, expand=False)
         vbox.pack_start(modebox, expand=False)
         vbox.pack_start(questionbox, expand=False)
         vbox.pack_start(answerbox, expand=False)
