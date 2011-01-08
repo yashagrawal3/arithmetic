@@ -209,7 +209,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         difficultylabel = gtk.Label("Difficulty: ")
         periodlabel     = gtk.Label("Period: ")
         periodunitslabel= gtk.Label(" sec  ")
-        modelabel       = gtk.Label("Question types: ")
+        modelabel       = gtk.Label("Puzzles: ")
         questionlabel   = gtk.Label("Question: ")
         answerlabel     = gtk.Label("Answer: ")
         decisionlabel   = gtk.Label("You were: ")
