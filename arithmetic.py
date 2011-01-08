@@ -484,7 +484,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
                 exec text in env_global, env_local
 
                 togglename = hash + "_toggle"
-                self.cloud[togglename] = groupthink.gtk_tools.SharedToggleButton(env_local['name'])
+                self.cloud[togglename] = groupthink.gtk_tools.SharedToggleButton(' ' + env_local['name'] + ' ')
                 self.cloud[togglename].set_active(False)
                 self.cloud[togglename].connect("toggled", self.puzzle_toggle_cb, hash)
                 self.cloud[togglename].sort_key = env_local['sort_key']
