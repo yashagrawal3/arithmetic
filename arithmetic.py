@@ -452,7 +452,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         if self.cloud.periodentry.get_text() != str(self.secondsleft):
             self.cloud.periodentry.set_text(str(self.period))
 
-        markup = "%s : <span weight=\"bold\" fgcolor=\"%s\">%s</span>" % (
+        markup = "%s : <span weight=\"bold\" color=\"%s\">%s</span>" % (
             old_question,
             old_answercorrect and "blue" or "black",
             old_answer)
