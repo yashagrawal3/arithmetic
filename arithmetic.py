@@ -201,6 +201,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         questionbox   = gtk.HBox()
         answerbox     = gtk.HBox()
         decisionbox   = gtk.HBox()
+        lastroundbox  = gtk.HBox()
+        bottomrowbox  = gtk.HBox()
         countdownbox  = gtk.HBox()
 
         # Labels
@@ -211,6 +213,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         questionlabel   = gtk.Label("Question: ")
         answerlabel     = gtk.Label("Answer: ")
         decisionlabel   = gtk.Label("You were: ")
+        lastroundlabel  = gtk.Label("Last round: ")
+        self.lastanswerlabel = gtk.Label("")
         self.countdownlabel = gtk.Label("Time until next question: ")
 
         # ToggleButtons for difficulty
@@ -272,7 +276,14 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         answerbox.pack_start(self.answerentry)
         decisionbox.pack_start(decisionlabel, expand=False)
         decisionbox.pack_start(self.decisionentry)
+
+        lastroundbox.pack_start(lastroundlabel, expand=False)
+        lastroundbox.pack_start(self.lastanswerlabel, expand=False)
+
         countdownbox.pack_start(self.countdownlabel, expand=False)
+
+        bottomrowbox.pack_start(countdownbox)
+        bottomrowbox.pack_end(lastroundbox)
 
         vbox.pack_start(toprowbox, expand=False)
         vbox.pack_start(modebox, expand=False)
@@ -280,6 +291,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         vbox.pack_start(answerbox, expand=False)
         vbox.pack_start(decisionbox, expand=False)
         vbox.pack_start(countdownbox, expand=False)
+        vbox.pack_start(bottomrowbox, expand=False)
         vbox.pack_start(scorebox)
 
         # Set defaults for questions.
@@ -291,6 +303,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.start_question()
         self.start_countdown()
         self.answerentry.grab_focus()
+        self.lastanswerlabel.set_markup("")
         return vbox
 
     def when_initiating_sharing(self):
@@ -356,30 +369,28 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             raise AssertionError
 
     def solve (self, answer, incorrect=False):
-        if not incorrect:
-            try:
-                answer = int(answer.get_text())
-            except ValueError:
-                self.answerentry.set_text("")
-                return
+        try:
+            answer = int(answer)
+        except ValueError:
+            self.answerentry.set_text("")
+            self.decisionentry.set_text("")
+            return
 
-        self.answergiven = True
         self.endtime = time.time()
         self.model.set_value(self.olditer, 3, self.endtime - self.starttime)
 
-        try:
-            if not incorrect and int(answer) == int(self.answer):
-                self.decisionentry.set_text("Correct!")
-                old_score = self.scoreboard[self.mynickname]
-                new_score = ImmutableScore(old_score=old_score,
-                                           cumulative_score=1,
-                                           last_score=1,
-                                           last_time=self.endtime - self.starttime,)
-                self.scoreboard[self.mynickname] = new_score
-            else:
-                self.decisionentry.set_text("Not correct")
-        except:
-            self.decisionentry.set_text("Not correct: invalid input")
+        if int(answer) == int(self.answer):
+            self.answercorrect = True
+            self.decisionentry.set_text("Correct!")
+            old_score = self.scoreboard[self.mynickname]
+            new_score = ImmutableScore(old_score=old_score,
+                                       cumulative_score=1,
+                                       last_score=1,
+                                       last_time=self.endtime - self.starttime,)
+            self.scoreboard[self.mynickname] = new_score
+        else:
+            self.answercorrect = False
+            self.decisionentry.set_text("Not correct")
 
     # Callbacks.
     def _period_cb(self, _):
@@ -392,7 +403,8 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             pass
 
     def answer_cb(self, answer, incorrect=False):
-        self.solve(answer, incorrect)
+        self.answergiven = True
+        self.solve(self.answerentry.get_text())
 
     def start_countdown(self):
         self.secondsleft = self.period
@@ -408,7 +420,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         if curr_index != self._question_index:
             self._question_index = curr_index
             if self.answergiven == False:
-                self.answer_cb(0, incorrect=True)
+                self.solve("")
             self.start_question()
             self.answerentry.set_text("")
 
@@ -424,15 +436,28 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         return True
 
     def start_question(self):
+        old_answer = self.answer
+        old_question = self.question.replace("\n", "  ")
+        old_answergiven = getattr(self, "answergiven", False)
+        old_answercorrect = getattr(self, "answercorrect", False)
+
         self.starttime = time.time()
         self.generate_new_question()
         self.questionentry.get_buffer().set_text(self.question)
         self.answergiven = False
+        self.answercorrect = False
         self.answerentry.set_text("")
         self.decisionentry.set_text("")
 
         if self.cloud.periodentry.get_text() != str(self.secondsleft):
             self.cloud.periodentry.set_text(str(self.period))
+
+        markup = "%s : <span weight=\"bold\" fgcolor=\"%s\">%s</span>" % (
+            old_question,
+            old_answercorrect and "blue" or "black",
+            old_answer)
+        self.lastanswerlabel.set_markup(markup.strip())
+
 
     def easy_cb(self, toggled):
         self.DIFFICULTY_EASY = toggled.get_active()
