@@ -23,9 +23,9 @@ import time
 import os
 import os.path
 import hashlib
-import groupthink
-import groupthink.gtk_tools
-import groupthink.sugar_tools
+import dobject.groupthink as groupthink
+import dobject.groupthink.gtk_tools as gtk_tools
+import dobject.groupthink.sugar_tools as sugar_tools
 
 from gettext import gettext as _
 from sugar.activity import activity
