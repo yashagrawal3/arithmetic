@@ -109,9 +109,6 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             toolbar.add(gtk.SeparatorToolItem())
 
         if _USE_OLD_TOOLBARS:
-            toolbox.add_toolbar(_("Game"), toolbar)
-            toolbox.set_current_toolbar(1)
-
             self.set_toolbox(toolbox)
             toolbox.show()
         else:
