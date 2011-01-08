@@ -8,7 +8,10 @@
 """Arithmetic Activity: A quiz activity for arithmetic."""
 
 from __future__ import with_statement
-import sys
+import sys, cgitb
+
+cgitb.enable(format="plain")
+cgitb.handler = sys.excepthook
 
 import logging
 import gtk
