@@ -203,16 +203,17 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         countdownbox  = gtk.HBox()
 
         # Labels
-        difficultylabel = gtk.Label("Difficulty: ")
-        periodlabel     = gtk.Label("Period: ")
+        difficultylabel = gtk.Label(_("Difficulty: "))
+        periodlabel     = gtk.Label(_("Period: "))
         periodunitslabel= gtk.Label(" sec  ")
-        modelabel       = gtk.Label("Puzzles: ")
-        questionlabel   = gtk.Label("Question: ")
-        answerlabel     = gtk.Label("Answer: ")
-        decisionlabel   = gtk.Label("You were: ")
-        lastroundlabel  = gtk.Label("Last round: ")
+        modelabel       = gtk.Label(_("Puzzles: "))
+        questionlabel   = gtk.Label(_("Question: "))
+        answerlabel     = gtk.Label(_("Answer: "))
+        decisionlabel   = gtk.Label(_("You were: "))
+        lastroundlabel  = gtk.Label(_("Last round: "))
         self.lastanswerlabel = gtk.Label("")
-        self.countdownlabel = gtk.Label("Time until next question: ")
+        staticcountdownlabel = gtk.Label(_("Time until next question: "))
+        self.countdownlabel  = gtk.Label("")
 
         # ToggleButtons for difficulty
         self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("< 10")
@@ -277,6 +278,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         lastroundbox.pack_start(lastroundlabel, expand=False)
         lastroundbox.pack_start(self.lastanswerlabel, expand=False)
 
+        countdownbox.pack_start(staticcountdownlabel, expand=False)
         countdownbox.pack_start(self.countdownlabel, expand=False)
 
         bottomrowbox.pack_start(countdownbox)
@@ -378,7 +380,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         if int(answer) == int(self.answer):
             self.answercorrect = True
-            self.decisionentry.set_text("Correct!")
+            self.decisionentry.set_text(_("Correct!"))
             old_score = self.scoreboard[self.mynickname]
             new_score = ImmutableScore(old_score=old_score,
                                        cumulative_score=1,
@@ -387,7 +389,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             self.scoreboard[self.mynickname] = new_score
         else:
             self.answercorrect = False
-            self.decisionentry.set_text("Not correct")
+            self.decisionentry.set_text(_("Not correct"))
 
     # Callbacks.
     def _period_cb(self, _):
@@ -406,14 +408,14 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     def start_countdown(self):
         self.secondsleft = self.period
         gobject.timeout_add(1000, self.onesecond_cb)
-        self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>s' % self.secondsleft)
+        self.countdownlabel.set_markup(' <span size="xx-large">%s</span>s' % self.secondsleft)
 
     def onesecond_cb(self):
         elapsed_time = self.timer.time() - self.cloud.startpoint.get_value()
         curr_index = int(math.floor(elapsed_time/self.period))
         time_to_next = self.period - (elapsed_time - (self.period*curr_index))
         self.secondsleft = int(math.ceil(time_to_next))
-        self.countdownlabel.set_markup('Time until next question: <span size="xx-large">%s</span>s' % self.secondsleft)
+        self.countdownlabel.set_markup(' <span size="xx-large">%s</span>s' % self.secondsleft)
         if curr_index != self._question_index:
             self._question_index = curr_index
             if self.answergiven == False:
