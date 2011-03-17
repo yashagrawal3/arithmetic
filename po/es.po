@@ -62,29 +62,76 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 04:02+0200\n"
-"PO-Revision-Date: 2011-02-03 19:17+0200\n"
-"Last-Translator: Santiago <santiago_mota@yahoo.es>\n"
+"POT-Creation-Date: 2011-01-08 06:20+0000\n"
+"PO-Revision-Date: 2011-03-17 20:52+0200\n"
+"Last-Translator: Rafael Ortiz <rafael@laptop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.3\n"
+"X-Generator: Pootle 2.0.1\n"
 
 #: activity/activity.info:2
 msgid "Arithmetic"
 msgstr "Aritmética"
 
-#~ msgid "Name"
-#~ msgstr "Nombre"
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:173
+msgid "Name"
+msgstr "Nombre"
 
-#~ msgid "Round score"
-#~ msgstr "Puntaje de la ronda"
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:174
+msgid "Round score"
+msgstr "Puntuación de la ronda"
 
-#~ msgid "Total score"
-#~ msgstr "Puntuación total"
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:175
+msgid "Total score"
+msgstr "Puntuación total"
 
-#~ msgid "Time for answering last question"
-#~ msgstr "Tiempo para responder la última pregunta"
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:176
+msgid "Time for answering last question"
+msgstr "Tiempo para responder la última pregunta"
+
+#  difficultylabel = gtk.Label(_("Difficulty: "))
+# 	
+# 
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:206
+msgid "Difficulty: "
+msgstr "Dificultad:"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:207
+msgid "Period: "
+msgstr "Periodo:"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:209
+msgid "Puzzles: "
+msgstr "Acertijos:"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:210
+msgid "Question: "
+msgstr "Pregunta:"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:211
+msgid "Answer: "
+msgstr "Respuesta:"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:212
+msgid "You were: "
+msgstr "Usted era"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:213
+msgid "Last round: "
+msgstr "Ultima ronda"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:215
+msgid "Time until next question: "
+msgstr "Tiempo para la siguiente pregunta:"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:383
+msgid "Correct!"
+msgstr "Correcto!"
+
+#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:392
+msgid "Not correct"
+msgstr "Incorrecto"
