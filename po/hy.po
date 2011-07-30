@@ -23,15 +23,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-08 06:20+0000\n"
-"PO-Revision-Date: 2011-01-03 22:21+0200\n"
-"Last-Translator: rubina <rubina@aua.am>\n"
+"PO-Revision-Date: 2011-07-29 21:40+0200\n"
+"Last-Translator: Chris <cjl@laptop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: hy\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.0.3\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 2.0.1\n"
 
 #: activity/activity.info:2
 msgid "Arithmetic"
@@ -55,40 +55,40 @@ msgstr "Վերջին հարցին պատասխանելու ժամանակը"
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:206
 msgid "Difficulty: "
-msgstr ""
+msgstr "Դժվարություն` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:207
 msgid "Period: "
-msgstr ""
+msgstr "Ժամանակաշրջան` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:209
 msgid "Puzzles: "
-msgstr ""
+msgstr "Գլուխկոտրուկ` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:210
 msgid "Question: "
-msgstr ""
+msgstr "Հարց` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:211
 msgid "Answer: "
-msgstr ""
+msgstr "Պատասխան` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:212
 msgid "You were: "
-msgstr ""
+msgstr "Դուք` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:213
 msgid "Last round: "
-msgstr ""
+msgstr "Վերջին փուլը` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:215
 msgid "Time until next question: "
-msgstr ""
+msgstr "Ժամանակ մինչ հաջորդ հարցը` "
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:383
 msgid "Correct!"
-msgstr ""
+msgstr "Ճիշտ է"
 
 #: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:392
 msgid "Not correct"
-msgstr ""
+msgstr "Սխալ է"
