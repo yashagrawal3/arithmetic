@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-09 13:19-0400\n"
+"PO-Revision-Date: 2011-08-19 08:08+0200\n"
+"Last-Translator: Chris <cjl@laptop.org>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hus\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.1\n"
+
+#: activity/activity.info:2
+msgid "Arithmetic"
+msgstr "Ajixtaláb exobintaláb"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
+msgid "Name"
+msgstr "Bij"
+
+# La palabra score se refiere a la puntuación, en el sentido de calificación, no a puntos gráficos (Zurik)
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
+msgid "Round score"
+msgstr "Tuk ti kwechodh"
+
+# La palabra score se refiere a calificación. No a puntos gráficos. (Zurik)
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
+msgid "Total score"
+msgstr "Tuk kidhtal"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
+msgid "Time for answering last question"
+msgstr "K'íj abal ka tok'tsiy in taltal an konobixtaláb"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
+msgid "Difficulty: "
+msgstr "K'ibataláb: "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
+msgid "Period: "
+msgstr "Jó'lidh: "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
+msgid "Puzzles: "
+msgstr "Tsalpanchixtaláb: "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
+msgid "Question: "
+msgstr "Konobixtaláb: "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
+msgid "Answer: "
+msgstr "Tok'tsixtaláb: "
+
+# Tatá'ye
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
+msgid "You were: "
+msgstr "Pelak xaxá'ye: "
+
+# Putuntal tin kwechodh
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
+msgid "Last round: "
+msgstr "Taltal an kwechodh: "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
+msgid "Time until next question: "
+msgstr "K'íj abal in áytal an konobixtaláb: "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
+msgid "Correct!"
+msgstr "Alwa'!"
+
+# Ibáj alwa'
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
+msgid "Not correct"
+msgstr "Yab alwa'"
