@@ -62,9 +62,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-08 06:20+0000\n"
-"PO-Revision-Date: 2011-03-17 20:52+0200\n"
-"Last-Translator: Rafael Ortiz <rafael@laptop.org>\n"
+"POT-Creation-Date: 2011-08-09 13:19-0400\n"
+"PO-Revision-Date: 2011-08-26 17:34+0200\n"
+"Last-Translator: Chris <cjl@laptop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -77,61 +77,59 @@ msgstr ""
 msgid "Arithmetic"
 msgstr "Aritmética"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:173
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
 msgid "Name"
 msgstr "Nombre"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:174
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
 msgid "Round score"
 msgstr "Puntuación de la ronda"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:175
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
 msgid "Total score"
 msgstr "Puntuación total"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:176
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
 msgid "Time for answering last question"
 msgstr "Tiempo para responder la última pregunta"
 
 #  difficultylabel = gtk.Label(_("Difficulty: "))
-# 	
-# 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:206
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
 msgid "Difficulty: "
-msgstr "Dificultad:"
+msgstr "Dificultad: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:207
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
 msgid "Period: "
-msgstr "Periodo:"
+msgstr "Periodo: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:209
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
 msgid "Puzzles: "
-msgstr "Acertijos:"
+msgstr "Acertijos: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:210
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
 msgid "Question: "
-msgstr "Pregunta:"
+msgstr "Pregunta: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:211
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
 msgid "Answer: "
-msgstr "Respuesta:"
+msgstr "Respuesta: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:212
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
 msgid "You were: "
-msgstr "Usted era"
+msgstr "Usted era: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:213
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
 msgid "Last round: "
-msgstr "Ultima ronda"
+msgstr "Ultima ronda: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:215
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
 msgid "Time until next question: "
-msgstr "Tiempo para la siguiente pregunta:"
+msgstr "Tiempo para la siguiente pregunta: "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:383
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
 msgid "Correct!"
 msgstr "Correcto!"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:392
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
 msgid "Not correct"
 msgstr "Incorrecto"
