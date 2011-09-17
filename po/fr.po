@@ -26,8 +26,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-17 10:59-0500\n"
-"PO-Revision-Date: 2010-01-02 11:52-0400\n"
+"POT-Creation-Date: 2011-08-09 13:19-0400\n"
+"PO-Revision-Date: 2011-09-17 09:30+0200\n"
 "Last-Translator: samy boutayeb <s.boutayeb@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fr\n"
@@ -35,24 +35,64 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Pootle 1.2.1\n"
+"X-Generator: Pootle 2.0.1\n"
 
 #: activity/activity.info:2
 msgid "Arithmetic"
 msgstr "Arithmétique"
 
-#: /home/cjb/git/mainline/arithmetic.py:108
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
 msgid "Name"
 msgstr "Nom"
 
-#: /home/cjb/git/mainline/arithmetic.py:109
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
 msgid "Round score"
 msgstr "Score du tour"
 
-#: /home/cjb/git/mainline/arithmetic.py:110
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
 msgid "Total score"
 msgstr "Score total"
 
-#: /home/cjb/git/mainline/arithmetic.py:111
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
 msgid "Time for answering last question"
 msgstr "Temps de réponse à la dernière question"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
+msgid "Difficulty: "
+msgstr "Difficulté : "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
+msgid "Period: "
+msgstr "Période :"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
+msgid "Puzzles: "
+msgstr "Puzzles : "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
+msgid "Question: "
+msgstr "Question : "
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
+msgid "Answer: "
+msgstr "Réponse :"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
+msgid "You were: "
+msgstr "Résultat :"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
+msgid "Last round: "
+msgstr "Dernier tour :"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
+msgid "Time until next question: "
+msgstr "Temps restant avant la question suivante :"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
+msgid "Correct!"
+msgstr "Exact !"
+
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
+msgid "Not correct"
+msgstr "Inexact"
