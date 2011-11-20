@@ -1,0 +1,91 @@
+# Amos Batto <amosbatt@yahoo.com>, 2011.
+# Irma Alvarez <sankaypillo@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-09 13:19-0400\n"
+"PO-Revision-Date: 2011-11-20 02:30+0200\n"
+"Last-Translator: Chris <cjl@laptop.org>\n"
+"Language-Team: Voluntarios quechuas Sugar Camp Lima\n"
+"Language: quz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;\n"
+"X-Generator: Pootle 2.0.5\n"
+
+#  "Aritmética"
+#: activity/activity.info:2
+msgid "Arithmetic"
+msgstr "Aritmetica"
+
+#  "Nombre"
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
+msgid "Name"
+msgstr "Suti"
+
+#  "Puntuación de la ronda"
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
+msgid "Round score"
+msgstr "Llallipasqakuna"
+
+#  "Puntuación total"
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
+msgid "Total score"
+msgstr "Llapa llallipasqakuna"
+
+#  "Tiempo para responder la última pregunta"
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
+msgid "Time for answering last question"
+msgstr "Qhipa tapuyta kutichinapaq pacha:"
+
+#  "Dificultad: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
+msgid "Difficulty: "
+msgstr "Sasa kay: "
+
+#  "Periodo: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
+msgid "Period: "
+msgstr "Pacha: "
+
+#  "Acertijos: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
+msgid "Puzzles: "
+msgstr "Watuchikuna: "
+
+#  "Pregunta: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
+msgid "Question: "
+msgstr "Tapuy: "
+
+#  "Respuesta: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
+msgid "Answer: "
+msgstr "Kutichiku: "
+
+#  "Usted era: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
+msgid "You were: "
+msgstr "Qam karanki:"
+
+#  "Ultima ronda: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
+msgid "Last round: "
+msgstr "Qhipa mit'a: "
+
+#  "Tiempo para la siguiente pregunta: "
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
+msgid "Time until next question: "
+msgstr "Qhipa tapuypa pacha:"
+
+#  "Correcto!"
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
+msgid "Correct!"
+msgstr "Allin!"
+
+#  "Incorrecto"
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
+msgid "Not correct"
+msgstr "Mana allinchu"
