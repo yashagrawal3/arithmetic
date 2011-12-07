@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-08 06:20+0000\n"
-"PO-Revision-Date: 2011-07-29 21:40+0200\n"
+"POT-Creation-Date: 2011-08-09 13:19-0400\n"
+"PO-Revision-Date: 2011-12-05 21:57+0200\n"
 "Last-Translator: Chris <cjl@laptop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: hy\n"
@@ -31,64 +31,64 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Pootle 2.0.1\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: activity/activity.info:2
 msgid "Arithmetic"
 msgstr "Թվաբանություն"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:173
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
 msgid "Name"
 msgstr "Անուն"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:174
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
 msgid "Round score"
 msgstr "Կլոր միավոր"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:175
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
 msgid "Total score"
 msgstr "Ընդհանուր միավոր"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:176
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
 msgid "Time for answering last question"
 msgstr "Վերջին հարցին պատասխանելու ժամանակը"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:206
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
 msgid "Difficulty: "
 msgstr "Դժվարություն` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:207
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
 msgid "Period: "
 msgstr "Ժամանակաշրջան` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:209
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
 msgid "Puzzles: "
 msgstr "Գլուխկոտրուկ` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:210
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
 msgid "Question: "
 msgstr "Հարց` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:211
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
 msgid "Answer: "
 msgstr "Պատասխան` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:212
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
 msgid "You were: "
 msgstr "Դուք` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:213
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
 msgid "Last round: "
 msgstr "Վերջին փուլը` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:215
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
 msgid "Time until next question: "
 msgstr "Ժամանակ մինչ հաջորդ հարցը` "
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:383
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
 msgid "Correct!"
 msgstr "Ճիշտ է"
 
-#: /home/sugar/Activities/Arithmetic.activity/arithmetic.py:392
+#: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
 msgid "Not correct"
 msgstr "Սխալ է"
