@@ -30,20 +30,20 @@
 # Copyright (C) 2009 
 # This file is distributed under the same license as the PACKAGE package.
 # Chris Ball <cjb@laptop.org>
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-09 13:19-0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2012-06-06 03:18+0200\n"
+"Last-Translator: Chris <cjl@laptop.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.5.2\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: activity/activity.info:2
 msgid "Arithmetic"
@@ -51,56 +51,56 @@ msgstr ""
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
 msgid "Name"
-msgstr ""
+msgstr "Nama"
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
 msgid "Round score"
-msgstr ""
+msgstr "Nilai babak"
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
 msgid "Total score"
-msgstr ""
+msgstr "Nilai total"
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
 msgid "Time for answering last question"
-msgstr ""
+msgstr "Waktu untuk menjawab pertanyaan terakhir"
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
 msgid "Difficulty: "
-msgstr ""
+msgstr "Kesulitan: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
 msgid "Period: "
-msgstr ""
+msgstr "Perioda: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
 msgid "Puzzles: "
-msgstr ""
+msgstr "Teka-teki: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
 msgid "Question: "
-msgstr ""
+msgstr "Pertanyaan: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
 msgid "Answer: "
-msgstr ""
+msgstr "Jawaban: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
 msgid "You were: "
-msgstr ""
+msgstr "Anda: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
 msgid "Last round: "
-msgstr ""
+msgstr "Ronde terakhir: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
 msgid "Time until next question: "
-msgstr ""
+msgstr "Waktu sampai pertanyaan selanjutnya: "
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
 msgid "Correct!"
-msgstr ""
+msgstr "Benar!"
 
 #: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
 msgid "Not correct"
-msgstr ""
+msgstr "Tidak benar"
