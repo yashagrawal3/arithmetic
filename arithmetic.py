@@ -14,10 +14,10 @@ cgitb.enable(format="plain")
 cgitb.handler = sys.excepthook
 
 import logging
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Pango
 import random
-import gobject
+from gi.repository import GObject
 import math
 import time
 import os
@@ -28,17 +28,17 @@ import dobject.groupthink.gtk_tools as gtk_tools
 import dobject.groupthink.sugar_tools as sugar_tools
 
 from gettext import gettext as _
-from sugar.activity import activity
-from sugar import profile
+from sugar3.activity import activity
+from sugar3 import profile
 
 try:
     # 0.86+ toolbar widgets
-    from sugar.activity.widgets import ActivityToolbarButton, StopButton
-    from sugar.graphics.toolbarbox import ToolbarBox, ToolbarButton
+    from sugar3.activity.widgets import ActivityToolbarButton, StopButton
+    from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
     _USE_OLD_TOOLBARS = False
 except ImportError:
     # Pre-0.86 toolbar widgets
-    from sugar.activity.activity import ActivityToolbox
+    from sugar3.activity.activity import ActivityToolbox
     _USE_OLD_TOOLBARS = True
 
 def score_codec(score_or_opaque, pack_or_unpack):
@@ -95,7 +95,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     def _configure_toolbars(self):
         if _USE_OLD_TOOLBARS:
             toolbox = ActivityToolbox(self)
-            toolbar = gtk.Toolbar()
+            toolbar = Gtk.Toolbar()
         else:
             toolbar_box = ToolbarBox()
             toolbar = toolbar_box.toolbar
@@ -106,7 +106,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
             self._add_expander(toolbar_box.toolbar)
 
-            toolbar.add(gtk.SeparatorToolItem())
+            toolbar.add(Gtk.SeparatorToolItem())
 
         if _USE_OLD_TOOLBARS:
             self.set_toolbox(toolbox)
@@ -123,7 +123,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
     def _add_expander(self, toolbar):
         """Insert a toolbar item which will expand to fill the available
         space."""
-        separator = gtk.SeparatorToolItem()
+        separator = Gtk.SeparatorToolItem()
         separator.props.draw = False
         separator.set_expand(True)
         toolbar.insert(separator, -1)
@@ -157,23 +157,23 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self._active_mode_hashes = set()
 
         # Main layout
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
 
         # Set a startpoint for a shared seed
         self.cloud.startpoint = groupthink.HighScore(self.timer.time(), 0)
 
         # Scoreboard
-        scorebox = gtk.VBox()
-        self.model = gtk.TreeStore(gobject.TYPE_STRING, # name
-                                   gobject.TYPE_INT,    # last round score
-                                   gobject.TYPE_INT,    # total score
-                                   gobject.TYPE_FLOAT)  # time for last question
-        self.treeview = treeview = gtk.TreeView(self.model)
-        cellrenderer = gtk.CellRendererText()
-        col1 = gtk.TreeViewColumn(_("Name"), cellrenderer, text=0)
-        col2 = gtk.TreeViewColumn(_("Round score"), cellrenderer, text=1)
-        col3 = gtk.TreeViewColumn(_("Total score"), cellrenderer, text=2)
-        col4 = gtk.TreeViewColumn(_("Time for answering last question"), cellrenderer, text=3)
+        scorebox = Gtk.VBox()
+        self.model = Gtk.TreeStore(GObject.TYPE_STRING, # name
+                                   GObject.TYPE_INT,    # last round score
+                                   GObject.TYPE_INT,    # total score
+                                   GObject.TYPE_FLOAT)  # time for last question
+        self.treeview = treeview = Gtk.TreeView(self.model)
+        cellrenderer = Gtk.CellRendererText()
+        col1 = Gtk.TreeViewColumn(_("Name"), cellrenderer, text=0)
+        col2 = Gtk.TreeViewColumn(_("Round score"), cellrenderer, text=1)
+        col3 = Gtk.TreeViewColumn(_("Total score"), cellrenderer, text=2)
+        col4 = Gtk.TreeViewColumn(_("Time for answering last question"), cellrenderer, text=3)
         treeview.append_column(col1)
         treeview.append_column(col2)
         treeview.append_column(col3)
@@ -187,33 +187,33 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.model.set_value(self.olditer, 2, my_score.cumulative_score)
         self.model.set_value(self.olditer, 3, my_score.last_time)
         treeview.expand_all()
-        scorebox.pack_start(treeview)
+        scorebox.pack_start(treeview, True, True, 0)
 
         # Horizontal fields
-        difficultybox = gtk.HBox()
-        periodbox     = gtk.HBox()
-        toprowbox     = gtk.HBox()
-        modebox       = gtk.HBox()
-        self.inner_modebox = gtk.HBox()
-        questionbox   = gtk.HBox()
-        answerbox     = gtk.HBox()
-        decisionbox   = gtk.HBox()
-        lastroundbox  = gtk.HBox()
-        bottomrowbox  = gtk.HBox()
-        countdownbox  = gtk.HBox()
+        difficultybox = Gtk.HBox()
+        periodbox     = Gtk.HBox()
+        toprowbox     = Gtk.HBox()
+        modebox       = Gtk.HBox()
+        self.inner_modebox = Gtk.HBox()
+        questionbox   = Gtk.HBox()
+        answerbox     = Gtk.HBox()
+        decisionbox   = Gtk.HBox()
+        lastroundbox  = Gtk.HBox()
+        bottomrowbox  = Gtk.HBox()
+        countdownbox  = Gtk.HBox()
 
         # Labels
-        difficultylabel = gtk.Label(_("Difficulty: "))
-        periodlabel     = gtk.Label(_("Period: "))
-        periodunitslabel= gtk.Label(" sec  ")
-        modelabel       = gtk.Label(_("Puzzles: "))
-        questionlabel   = gtk.Label(_("Question: "))
-        answerlabel     = gtk.Label(_("Answer: "))
-        decisionlabel   = gtk.Label(_("You were: "))
-        lastroundlabel  = gtk.Label(_("Last round: "))
-        self.lastanswerlabel = gtk.Label("")
-        staticcountdownlabel = gtk.Label(_("Time until next question: "))
-        self.countdownlabel  = gtk.Label("")
+        difficultylabel = Gtk.Label(label=_("Difficulty: "))
+        periodlabel     = Gtk.Label(label=_("Period: "))
+        periodunitslabel= Gtk.Label(label=" sec  ")
+        modelabel       = Gtk.Label(label=_("Puzzles: "))
+        questionlabel   = Gtk.Label(label=_("Question: "))
+        answerlabel     = Gtk.Label(label=_("Answer: "))
+        decisionlabel   = Gtk.Label(label=_("You were: "))
+        lastroundlabel  = Gtk.Label(label=_("Last round: "))
+        self.lastanswerlabel = Gtk.Label(label="")
+        staticcountdownlabel = Gtk.Label(label=_("Time until next question: "))
+        self.countdownlabel  = Gtk.Label(label="")
 
         # ToggleButtons for difficulty
         self.cloud.easytoggle      = groupthink.gtk_tools.SharedToggleButton("< 10")
@@ -229,7 +229,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
         # Entry for puzzle period
         self.cloud.periodentry = groupthink.gtk_tools.RecentEntry(max=2)
-        self.cloud.periodentry.modify_font(pango.FontDescription("Mono 14"))
+        self.cloud.periodentry.modify_font(Pango.FontDescription("Mono 14"))
         self.cloud.periodentry.set_text(str(self.period))
         self.cloud.periodentry.set_width_chars(2)
         self.cloud.periodentry.connect("changed", self._period_cb)
@@ -239,59 +239,59 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
         self.cloud.puzzles.register_listener(self.new_puzzles_cb)
 
         # Text entry box for question
-        self.questionentry = gtk.TextView()
-        self.questionentry.modify_font(pango.FontDescription("Mono 14"))
+        self.questionentry = Gtk.TextView()
+        self.questionentry.modify_font(Pango.FontDescription("Mono 14"))
         self.questionentry.set_property("editable", False)
 
         # Text entry box for answer
-        self.answerentry = gtk.Entry(max=50)
-        self.answerentry.modify_font(pango.FontDescription("Sans 14"))
+        self.answerentry = Gtk.Entry(max=50)
+        self.answerentry.modify_font(Pango.FontDescription("Sans 14"))
         self.answerentry.connect("activate", self.answer_cb)
 
         # Whether the user was correct
-        self.decisionentry = gtk.Entry(max=50)
-        self.decisionentry.modify_font(pango.FontDescription("Sans 14"))
+        self.decisionentry = Gtk.Entry(max=50)
+        self.decisionentry.modify_font(Pango.FontDescription("Sans 14"))
         self.decisionentry.set_property("editable", False)
 
         # Packing
-        difficultybox.pack_start(difficultylabel, expand=False)
-        difficultybox.pack_start(self.cloud.easytoggle, expand=False)
-        difficultybox.pack_start(self.cloud.mediumtoggle, expand=False)
-        difficultybox.pack_start(self.cloud.hardtoggle, expand=False)
+        difficultybox.pack_start(difficultylabel, False, True, 0)
+        difficultybox.pack_start(self.cloud.easytoggle, False, True, 0)
+        difficultybox.pack_start(self.cloud.mediumtoggle, False, True, 0)
+        difficultybox.pack_start(self.cloud.hardtoggle, False, True, 0)
 
-        periodbox.pack_start(periodlabel, expand=False)
-        periodbox.pack_start(self.cloud.periodentry, expand=False)
-        periodbox.pack_start(periodunitslabel, expand=False)
+        periodbox.pack_start(periodlabel, False, True, 0)
+        periodbox.pack_start(self.cloud.periodentry, False, True, 0)
+        periodbox.pack_start(periodunitslabel, False, True, 0)
 
-        toprowbox.pack_start(difficultybox, expand=False)
-        toprowbox.pack_end(periodbox, expand=False)
+        toprowbox.pack_start(difficultybox, False, True, 0)
+        toprowbox.pack_end(periodbox, False, True, 0)
 
-        questionbox.pack_start(questionlabel, expand=False)
-        questionbox.pack_start(self.questionentry)
-        modebox.pack_start(modelabel, expand=False)
-        modebox.pack_start(self.inner_modebox)
-        answerbox.pack_start(answerlabel, expand=False)
-        answerbox.pack_start(self.answerentry)
-        decisionbox.pack_start(decisionlabel, expand=False)
-        decisionbox.pack_start(self.decisionentry)
+        questionbox.pack_start(questionlabel, False, True, 0)
+        questionbox.pack_start(self.questionentry, True, True, 0)
+        modebox.pack_start(modelabel, False, True, 0)
+        modebox.pack_start(self.inner_modebox, True, True, 0)
+        answerbox.pack_start(answerlabel, False, True, 0)
+        answerbox.pack_start(self.answerentry, True, True, 0)
+        decisionbox.pack_start(decisionlabel, False, True, 0)
+        decisionbox.pack_start(self.decisionentry, True, True, 0)
 
-        lastroundbox.pack_start(lastroundlabel, expand=False)
-        lastroundbox.pack_start(self.lastanswerlabel, expand=False)
+        lastroundbox.pack_start(lastroundlabel, False, True, 0)
+        lastroundbox.pack_start(self.lastanswerlabel, False, True, 0)
 
-        countdownbox.pack_start(staticcountdownlabel, expand=False)
-        countdownbox.pack_start(self.countdownlabel, expand=False)
+        countdownbox.pack_start(staticcountdownlabel, False, True, 0)
+        countdownbox.pack_start(self.countdownlabel, False, True, 0)
 
-        bottomrowbox.pack_start(countdownbox)
-        bottomrowbox.pack_end(lastroundbox)
+        bottomrowbox.pack_start(countdownbox, True, True, 0)
+        bottomrowbox.pack_end(lastroundbox, True, True, 0)
 
-        vbox.pack_start(toprowbox, expand=False)
-        vbox.pack_start(modebox, expand=False)
-        vbox.pack_start(questionbox, expand=False)
-        vbox.pack_start(answerbox, expand=False)
-        vbox.pack_start(decisionbox, expand=False)
-        vbox.pack_start(countdownbox, expand=False)
-        vbox.pack_start(bottomrowbox, expand=False)
-        vbox.pack_start(scorebox)
+        vbox.pack_start(toprowbox, False, True, 0)
+        vbox.pack_start(modebox, False, True, 0)
+        vbox.pack_start(questionbox, False, True, 0)
+        vbox.pack_start(answerbox, False, True, 0)
+        vbox.pack_start(decisionbox, False, True, 0)
+        vbox.pack_start(countdownbox, False, True, 0)
+        vbox.pack_start(bottomrowbox, False, True, 0)
+        vbox.pack_start(scorebox, True, True, 0)
 
         # Set defaults for questions.
         self.setup_puzzles()
@@ -407,7 +407,7 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
 
     def start_countdown(self):
         self.secondsleft = self.period
-        gobject.timeout_add(1000, self.onesecond_cb)
+        GObject.timeout_add(1000, self.onesecond_cb)
         self.countdownlabel.set_markup(' <span size="xx-large">%s</span>s' % self.secondsleft)
 
     def onesecond_cb(self):
@@ -423,10 +423,10 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
             self.start_question()
             self.answerentry.set_text("")
 
-        self.model = gtk.TreeStore(gobject.TYPE_STRING, # name
-                                   gobject.TYPE_INT,    # last round score
-                                   gobject.TYPE_INT,    # total score
-                                   gobject.TYPE_FLOAT)  # time for last question
+        self.model = Gtk.TreeStore(GObject.TYPE_STRING, # name
+                                   GObject.TYPE_INT,    # last round score
+                                   GObject.TYPE_INT,    # total score
+                                   GObject.TYPE_FLOAT)  # time for last question
 
         for person, score in self.scoreboard.iteritems():
             self.model.append(None, (person, score.last_score, score.cumulative_score, score.last_time))
@@ -526,4 +526,4 @@ class ArithmeticActivity(groupthink.sugar_tools.GroupActivity):
                 kids.sort(key=lambda x: x.sort_key)
 
                 for kid in kids:
-                    self.inner_modebox.pack_start(kid, expand=False)
+                    self.inner_modebox.pack_start(kid, False, True, 0)
