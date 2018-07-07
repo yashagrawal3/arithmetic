@@ -7,11 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-09 13:19-0400\n"
+"POT-Creation-Date: 2009-12-17 10:59-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,60 +18,20 @@ msgstr ""
 
 #: activity/activity.info:2
 msgid "Arithmetic"
-msgstr "Aritmétika"
+msgstr ""
 
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:173
+#: /home/cjb/git/mainline/arithmetic.py:108
 msgid "Name"
 msgstr ""
 
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:174
+#: /home/cjb/git/mainline/arithmetic.py:109
 msgid "Round score"
 msgstr ""
 
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:175
+#: /home/cjb/git/mainline/arithmetic.py:110
 msgid "Total score"
 msgstr ""
 
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:176
+#: /home/cjb/git/mainline/arithmetic.py:111
 msgid "Time for answering last question"
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:206
-msgid "Difficulty: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:207
-msgid "Period: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:209
-msgid "Puzzles: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:210
-msgid "Question: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:211
-msgid "Answer: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:212
-msgid "You were: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:213
-msgid "Last round: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:215
-msgid "Time until next question: "
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:383
-msgid "Correct!"
-msgstr ""
-
-#: /home/cjb/git/Arithmetic.activity/arithmetic.py:392
-msgid "Not correct"
 msgstr ""
